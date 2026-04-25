@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UrbanRoots | Gardening Encyclopedia - India Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-image: url('images/dashboard-bg.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-color: #f0fdf4;
+      color: #000000;
+      overflow-x: hidden;
+    }
+
+    /* ── Glass Elements ── */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 50px rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .glass-pill {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 9999px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ── Hero Banner ── */
+    .hero-banner {
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #059669 100%);
+      border-radius: 32px;
+      position: relative;
+      overflow: hidden;
+      padding: 70px 60px;
+      margin-bottom: 50px;
+      box-shadow: 0 20px 40px rgba(6, 78, 59, 0.2);
+    }
+
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(52, 211, 153, 0.2) 0%, transparent 70%);
+      filter: blur(40px);
+      z-index: 1;
+    }
+
+    .section-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    /* ── Reveal Animations ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px) scale(0.98);
+      transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+    }
+
+    .reveal-left.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+    }
+
+    .reveal-right.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ── India Pride ── */
+    .india-badge {
+      background: linear-gradient(135deg, #ff9933 0%, #fff 50%, #138808 100%);
+      color: #1e293b;
+      padding: 6px 20px;
+      border-radius: 9999px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      box-shadow: 0 10px 20px rgba(255, 153, 51, 0.15);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+
+<body class="antialiased min-h-screen flex flex-col">
+
+  <canvas id="botanicalCanvas" class="fixed inset-0 pointer-events-none z-[-1] opacity-60"></canvas>
+
+  <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-8 pb-24 pt-10">
+
+    <!-- Hero Section -->
+    <div class="hero-banner reveal active relative">
+      <div class="relative z-10">
+        <div class="flex items-center gap-2 mb-8">
+          <div class="india-badge text-[10px] uppercase">🇮🇳 Bharat Gardening Edition</div>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black text-white leading-tight mb-4 drop-shadow-md"
+          style="font-family: 'Poppins', sans-serif;">
+          The Botanical <br> Encyclopedia
+        </h1>
+        <p class="text-white text-lg md:text-xl max-w-2xl font-bold mb-10 leading-relaxed drop-shadow-sm">
+          Master the unique art of urban cultivation across the Indian subcontinent — from monsoon care to native desi
+          species.
+        </p>
+
+        <div class="flex flex-wrap gap-3 mt-8">
+          <a href="#soil"
+            class="glass-pill px-6 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-500 hover:text-white transition-all">Soil
+            Science</a>
+          <a href="#plants"
+            class="glass-pill px-6 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-500 hover:text-white transition-all">Native
+            Species</a>
+          <a href="#calendar"
+            class="glass-pill px-6 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-500 hover:text-white transition-all">Seasonal
+            Guide</a>
+          <a href="#pests"
+            class="glass-pill px-6 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-500 hover:text-white transition-all">Natural
+            Remedies</a>
+          <a href="#fertilizers"
+            class="glass-pill px-6 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-500 hover:text-white transition-all">Organic
+            Feeds</a>
+          <a href="#watering"
+            class="glass-pill px-6 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-500 hover:text-white transition-all">Water
+            Wisdom</a>
+        </div>
+      </div>
+
+      <!-- Floating Decor Icon -->
+      <i
+        class="fa-solid fa-leaf absolute right-12 top-1/2 -translate-y-1/2 text-white/5 text-[15rem] pointer-events-none"></i>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+      <div class="glass-card p-8 reveal">
+        <div class="text-4xl mb-4"><i class="fa-solid fa-temperature-high text-orange-600"></i></div>
+        <h3 class="text-xl font-bold text-black mb-2">Climate Smart</h3>
+        <p class="text-slate-900 text-sm leading-relaxed font-medium">Expert advice tailored for tropical, subtropical,
+          and coastal
+          Indian zones.</p>
+      </div>
+      <div class="glass-card p-8 reveal delay-1">
+        <div class="text-4xl mb-4"><i class="fa-solid fa-droplet text-blue-600"></i></div>
+        <h3 class="text-xl font-bold text-black mb-2">Monsoon Ready</h3>
+        <p class="text-slate-900 text-sm leading-relaxed font-medium">Specialized techniques to handle intense rainfall
+          and humidity
+          fluctuations.</p>
+      </div>
+      <div class="glass-card p-8 reveal delay-2">
+        <div class="text-4xl mb-4"><i class="fa-solid fa-vial text-teal-600"></i></div>
+        <h3 class="text-xl font-bold text-black mb-2">Desi Science</h3>
+        <p class="text-slate-900 text-sm leading-relaxed font-medium">Traditional Indian wisdom combined with modern
+          organic
+          gardening practices.</p>
+      </div>
+    </div>
+
+    <!-- Section: Soil -->
+    <section id="soil" class="mb-24">
+      <div class="flex items-center gap-6 mb-12 reveal-left">
+        <div class="section-icon bg-amber-100 text-amber-700 border-2 border-amber-200">
+          <i class="fa-solid fa-mound"></i>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black text-black uppercase tracking-tight"
+            style="font-family: 'Poppins', sans-serif;">Soul of the Soil</h2>
+          <p class="text-slate-800 font-bold text-sm">Understanding Bharat's Diverse Earth</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="glass-card p-8 reveal">
+          <div
+            class="bg-emerald-50 text-emerald-700 px-4 py-1 rounded-full text-[10px] font-black uppercase w-max mb-4">
+            Plains & Delta</div>
+          <h4 class="text-xl font-bold text-black mb-3">Alluvial (Loamy)</h4>
+          <p class="text-slate-900 text-sm leading-relaxed mb-6 font-medium">The powerhouse of Indian agriculture. Rich
+            in
+            nutrients, perfect for nearly all urban vegetables like Tomatoes and Chillies.</p>
+          <div class="flex flex-wrap gap-2">
+            <span
+              class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-md text-emerald-600 border border-emerald-100">Tomatoes</span>
+            <span
+              class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-md text-emerald-600 border border-emerald-100">Brinjal</span>
+          </div>
+        </div>
+
+        <div class="glass-card p-8 reveal delay-1">
+          <div class="bg-orange-50 text-orange-700 px-4 py-1 rounded-full text-[10px] font-black uppercase w-max mb-4">
+            Deccan & Central</div>
+          <h4 class="text-xl font-bold text-orange-800 mb-3">Black Soil (Regur)</h4>
+          <p class="text-slate-600 text-sm leading-relaxed mb-6">Self-ploughing and moisture-retentive. Excellent for
+            cotton-related crops and hardy fruit trees like Lemon and Pomegranate.</p>
+          <div class="flex flex-wrap gap-2">
+            <span
+              class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-md text-orange-600 border border-orange-100">Citrus</span>
+            <span
+              class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-md text-orange-600 border border-orange-100">Cotton</span>
+          </div>
+        </div>
+
+        <div class="glass-card p-8 reveal delay-2">
+          <div class="bg-rose-50 text-rose-700 px-4 py-1 rounded-full text-[10px] font-black uppercase w-max mb-4">
+            Highlands & Coasts</div>
+          <h4 class="text-xl font-bold text-rose-800 mb-3">Laterite Soil</h4>
+          <p class="text-slate-600 text-sm leading-relaxed mb-6">Found in heavy rain areas. High acidity, requires
+            vermicompost. Perfect for cashews, tea, and tropical ginger.</p>
+          <div class="flex flex-wrap gap-2">
+            <span
+              class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-md text-rose-600 border border-rose-100">Ginger</span>
+            <span
+              class="text-[10px] font-bold bg-white/50 px-2 py-1 rounded-md text-rose-600 border border-rose-100">Curry
+              Leaf</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW: Soil pH & Amendment Guide -->
+      <div class="glass-card p-8 mt-8 reveal">
+        <h4 class="font-bold text-lg text-emerald-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-flask"></i>
+          Soil Testing & Natural Amendments</h4>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+          <div><span class="font-bold text-emerald-700">pH 4.5-5.5 (Acidic):</span> Add wood ash or lime to balance for
+            vegetables.</div>
+          <div><span class="font-bold text-emerald-700">pH 7.5-8.5 (Alkaline):</span> Add sulphur or organic compost.
+          </div>
+          <div><span class="font-bold text-emerald-700">Low Nitrogen:</span> Add neem cake, blood meal, or legume cover
+            crops.</div>
+          <div><span class="font-bold text-emerald-700">Low Potassium:</span> Add wood ash, banana peel compost, or
+            kelp.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Native Plants -->
+    <section id="plants" class="mb-24">
+      <div class="flex items-center gap-6 mb-12 reveal-right">
+        <div class="section-icon bg-emerald-100 text-emerald-700 border-2 border-emerald-200">
+          <i class="fa-solid fa-leaf"></i>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black text-black uppercase tracking-tight"
+            style="font-family: 'Poppins', sans-serif;">Native Champions</h2>
+          <p class="text-slate-800 font-bold text-sm">Resilient Plants for Every Desi Home</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div class="glass-card overflow-hidden reveal">
+          <div class="h-64 bg-emerald-100 relative">
+            <img src="images/tulsi.jpg" class="w-full h-full object-cover" onerror="this.src='images/tulsi.jpg'">
+            <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/40 to-transparent"></div>
+            <div class="absolute bottom-4 left-6 text-white font-black uppercase tracking-widest text-xs">Holy Grail of
+              Care</div>
+          </div>
+          <div class="p-8">
+            <h4 class="text-2xl font-bold text-black mb-4">Tulsi (Holy Basil)</h4>
+            <p class="text-slate-900 text-sm leading-relaxed mb-6 font-medium">The heartbeat of Indian homes. Requires
+              6+ hours of
+              sun and well-draining soil. Sacred, medicinal, and incredibly hardy.</p>
+            <div class="flex items-center gap-4 text-xs font-black text-emerald-600">
+              <span class="flex items-center gap-1"><i class="fa-solid fa-sun"></i> FULL SUN</span>
+              <span class="flex items-center gap-1"><i class="fa-solid fa-droplet"></i> MODERATE WATER</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card overflow-hidden reveal delay-1">
+          <div class="h-64 bg-emerald-100 relative">
+            <img src="https://images.unsplash.com/photo-1588613328229-3715df6111fc?auto=format&fit=crop&q=80&w=800"
+              class="w-full h-full object-cover" onerror="this.src='images/kadi.jpg'">
+            <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/40 to-transparent"></div>
+            <div class="absolute bottom-4 left-6 text-white font-black uppercase tracking-widest text-xs">Kitchen
+              Essential</div>
+          </div>
+          <div class="p-8">
+            <h4 class="text-2xl font-bold text-black mb-4">Kadi Patta (Curry Leaf)</h4>
+            <p class="text-slate-900 text-sm leading-relaxed mb-6 font-medium">A semi-tropical tree that loves Indian
+              warmth.
+              Essential for flavour, it thrives in large pots and enjoys organic manure.</p>
+            <div class="flex items-center gap-4 text-xs font-black text-emerald-600">
+              <span class="flex items-center gap-1"><i class="fa-solid fa-sun"></i> PARTIAL SUN</span>
+              <span class="flex items-center gap-1"><i class="fa-solid fa-droplet"></i> WEEKLY FEED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW: More Native Plants List -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div class="glass-card p-5 reveal">
+          <h5 class="font-bold text-emerald-800"><i class="fa-regular fa-star text-yellow-500"></i> Aloe Vera
+            (Ghritkumari)</h5>
+          <p class="text-xs text-slate-600 mt-2">Thrives on neglect. Water once a week in summer. Heals skin, purifies
+            air, perfect for Indian windowsills.</p>
+        </div>
+        <div class="glass-card p-5 reveal delay-1">
+          <h5 class="font-bold text-emerald-800"><i class="fa-regular fa-star text-yellow-500"></i> Money Plant (Pothos)
+          </h5>
+          <p class="text-xs text-slate-600 mt-2">Grows in water or soil. Brings prosperity according to Vastu. Low light
+            tolerant, cascading vine.</p>
+        </div>
+        <div class="glass-card p-5 reveal delay-2">
+          <h5 class="font-bold text-emerald-800"><i class="fa-regular fa-star text-yellow-500"></i> Peace Lily
+            (Spathiphyllum)</h5>
+          <p class="text-xs text-slate-600 mt-2">Loves humidity. Droops when thirsty — perfect beginner indicator.
+            Gorgeous white blooms.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW: Watering Wisdom Section -->
+    <section id="watering" class="mb-24">
+      <div class="flex items-center gap-6 mb-12 reveal-left">
+        <div class="section-icon bg-blue-100 text-blue-700 border-2 border-blue-200">
+          <i class="fa-solid fa-droplet"></i>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black text-black uppercase tracking-tight"
+            style="font-family: 'Poppins', sans-serif;">Watering Wisdom</h2>
+          <p class="text-slate-800 font-bold text-sm">The Art of Hydrating Your Garden</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="glass-card p-8 reveal">
+          <h4 class="text-xl font-bold text-emerald-800 mb-4"><i class="fa-regular fa-clock"></i> When to Water?</h4>
+          <div class="space-y-3 text-sm">
+            <p><span class="font-bold text-emerald-700">🌅 Morning (Best):</span> Water between 6-9 AM. Less
+              evaporation, prevents fungal diseases.</p>
+            <p><span class="font-bold text-emerald-700">🌙 Evening (Okay):</span> After sunset. Leaves stay wet
+              overnight — risk of mildew.</p>
+            <p><span class="font-bold text-emerald-700">☀️ Midday (Avoid):</span> Water droplets act like magnifying
+              glass, burning leaves.</p>
+          </div>
+        </div>
+
+        <div class="glass-card p-8 reveal delay-1">
+          <h4 class="text-xl font-bold text-emerald-800 mb-4"><i class="fa-solid fa-hand-peace"></i> The Finger Test
+          </h4>
+          <p class="text-sm text-slate-600 mb-4">Insert your finger 2 inches into soil. If dry → water deeply. If moist
+            → wait.</p>
+          <div class="bg-emerald-50 p-4 rounded-xl">
+            <p class="text-xs font-bold text-emerald-800">💧 Pro Tip: Deep Watering</p>
+            <p class="text-xs text-slate-600 mt-1">Water thoroughly until it drains from bottom. Encourages deep roots.
+              Shallow watering = weak plants.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seasonal Watering Chart -->
+      <div class="glass-card p-8 mt-6 reveal">
+        <h4 class="font-bold text-emerald-800 mb-4 text-center">📅 Seasonal Watering Guide (Indian Context)</h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
+          <div><span class="font-bold block text-orange-600">Summer</span><span class="text-xs">Daily
+              (morning/evening)</span></div>
+          <div><span class="font-bold block text-blue-600">Monsoon</span><span class="text-xs">As needed (check
+              drainage)</span></div>
+          <div><span class="font-bold block text-emerald-600">Autumn</span><span class="text-xs">Every 2-3 days</span>
+          </div>
+          <div><span class="font-bold block text-slate-600">Winter</span><span class="text-xs">Once a week (morning
+              only)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW: Organic Fertilizers Section -->
+    <section id="fertilizers" class="mb-24">
+      <div class="flex items-center gap-6 mb-12 reveal-right">
+        <div class="section-icon bg-teal-100 text-teal-700 border-2 border-teal-200">
+          <i class="fa-solid fa-recycle"></i>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black text-black uppercase tracking-tight"
+            style="font-family: 'Poppins', sans-serif;">Desi Fertilizers</h2>
+          <p class="text-slate-800 font-bold text-sm">Kitchen Waste to Garden Gold</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="glass-card p-7 reveal">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-4"><i
+              class="fa-solid fa-apple-alt text-emerald-600 text-xl"></i></div>
+          <h4 class="text-lg font-bold text-emerald-800">Vermicompost</h4>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">Earthworm castings = Black gold. Rich in microbes,
+            improves soil structure. Apply 1 cup per pot monthly.</p>
+        </div>
+        <div class="glass-card p-7 reveal delay-1">
+          <div class="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center mb-4"><i
+              class="fa-solid fa-coffee text-yellow-600 text-xl"></i></div>
+          <h4 class="text-lg font-bold text-emerald-800">Banana Peel Fertilizer</h4>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">Soak peels in water for 48 hours. Use water for
+            potassium boost. Great for flowering plants and tomatoes.</p>
+        </div>
+        <div class="glass-card p-7 reveal delay-2">
+          <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center mb-4"><i
+              class="fa-solid fa-seedling text-green-600 text-xl"></i></div>
+          <h4 class="text-lg font-bold text-emerald-800">Neem Cake Powder</h4>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">Natural nitrogen source + pest repellent. Mix 50g per
+            pot before planting for healthy roots.</p>
+        </div>
+      </div>
+
+      <div class="glass-card p-6 mt-6 reveal text-center">
+        <p class="text-sm font-medium text-emerald-800"><i class="fa-regular fa-lightbulb"></i> DIY Compost: Layer
+          kitchen scraps (veg peels, eggshells) with dry leaves in a bin. Turn weekly. Ready in 2 months!</p>
+      </div>
+    </section>
+
+    <!-- Calendar Section -->
+    <section id="calendar" class="mb-24">
+      <div class="glass-card p-12 reveal relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-64 h-64 bg-emerald-200/20 rounded-full blur-3xl"></div>
+        <div class="relative z-10">
+          <div class="text-center mb-16">
+            <div class="glass-pill px-6 py-2 mb-4 text-emerald-700 font-black text-[10px] uppercase inline-block">The
+              12-Month Roadmap</div>
+            <h2 class="text-4xl md:text-5xl font-black text-emerald-900 uppercase"
+              style="font-family: 'Poppins', sans-serif;">Indian Gardening Calendar</h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="border-l-4 border-orange-400 pl-6">
+              <h5 class="font-black text-orange-600 text-xs uppercase mb-2">Summer (Mar-Jun)</h5>
+              <p class="text-slate-700 font-bold mb-2">Heat & Mulch</p>
+              <p class="text-xs text-slate-500 leading-relaxed">Sow Okra, Bottle Gourd, and Cucumbers. Protect from loo
+                winds using green nets.</p>
+            </div>
+            <div class="border-l-4 border-blue-500 pl-6">
+              <h5 class="font-black text-blue-600 text-xs uppercase mb-2">Monsoon (Jul-Sep)</h5>
+              <p class="text-slate-700 font-bold mb-2">Drainage & Feed</p>
+              <p class="text-xs text-slate-500 leading-relaxed">Perfect for Turmeric and Ginger. Ensure zero
+                waterlogging to prevent root rot.</p>
+            </div>
+            <div class="border-l-4 border-emerald-500 pl-6">
+              <h5 class="font-black text-emerald-600 text-xs uppercase mb-2">Autumn (Oct-Nov)</h5>
+              <p class="text-slate-700 font-bold mb-2">The Transition</p>
+              <p class="text-xs text-slate-500 leading-relaxed">Prepare for winter greens. Sow Mustard, Palak, and
+                Fenugreek (Methi).</p>
+            </div>
+            <div class="border-l-4 border-slate-400 pl-6">
+              <h5 class="font-black text-slate-600 text-xs uppercase mb-2">Winter (Dec-Feb)</h5>
+              <p class="text-slate-700 font-bold mb-2">Peak Bloom</p>
+              <p class="text-xs text-slate-500 leading-relaxed">Harvest Cauliflower and Peas. Enjoy vibrant Marigolds
+                and Roses.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pest Control Section -->
+    <section id="pests" class="mb-24">
+      <div class="flex flex-col lg:flex-row items-center gap-16">
+        <div class="lg:w-1/2 reveal-left">
+          <div class="glass-pill px-6 py-2 mb-6 text-rose-700 font-black text-[10px] uppercase inline-block">Zero
+            Chemicals</div>
+          <h2 class="text-4xl font-black text-black mb-6" style="font-family: 'Poppins', sans-serif;">Ancient
+            Wisdom for Modern Pests</h2>
+          <p class="text-slate-900 font-bold leading-relaxed mb-8">
+            Harness the power of natural Indian remedies like Neem Oil and Garlic-Chilli sprays to keep your garden
+            thriving without synthetic toxins.
+          </p>
+          <div class="space-y-4">
+            <div class="flex items-center gap-4 glass-card p-4 border-l-4 border-emerald-500">
+              <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600"><i
+                  class="fa-solid fa-leaf"></i></div>
+              <p class="text-sm font-bold text-black">Neem Oil Spray (The All-Rounder) — 5ml neem + 1ml soap + 1L
+                water</p>
+            </div>
+            <div class="flex items-center gap-4 glass-card p-4 border-l-4 border-orange-500">
+              <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600"><i
+                  class="fa-solid fa-pepper-hot"></i></div>
+              <p class="text-sm font-bold text-black">Garlic-Chilli Desi Spray (Repellent for aphids and
+                caterpillars)</p>
+            </div>
+          </div>
+        </div>
+        <div class="lg:w-1/2 reveal-right relative">
+          <div class="absolute -inset-10 bg-rose-300 rounded-[3rem] blur-3xl opacity-20 z-0"></div>
+          <img src="https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&q=80&w=800"
+            class="relative z-10 rounded-[2rem] shadow-2xl border-4 border-white/50 grayscale hover:grayscale-0 transition-all duration-700"
+            onerror="this.src='https://via.placeholder.com/800x600?text=Natural+Pest+Control'">
+        </div>
+      </div>
+
+      <!-- NEW: Common Pests & Remedies Table -->
+      <div class="glass-card p-8 mt-10 reveal">
+        <h4 class="font-bold text-emerald-800 mb-5 text-center">🐛 Common Pests in Indian Gardens & Organic Remedies
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
+          <div class="flex justify-between border-b border-emerald-100 pb-2"><span class="font-bold">Aphids
+              (Chuus)</span><span>Neem oil spray, ladybugs</span></div>
+          <div class="flex justify-between border-b border-emerald-100 pb-2"><span
+              class="font-bold">Whiteflies</span><span>Yellow sticky traps, garlic spray</span></div>
+          <div class="flex justify-between border-b border-emerald-100 pb-2"><span
+              class="font-bold">Mealybugs</span><span>Rubbing alcohol on cotton swab</span></div>
+          <div class="flex justify-between border-b border-emerald-100 pb-2"><span class="font-bold">Leaf
+              Miners</span><span>Remove affected leaves, neem oil</span></div>
+          <div class="flex justify-between pb-2"><span class="font-bold">Fungus Gnats</span><span>Dry top soil, mosquito
+              bits (BTI)</span></div>
+          <div class="flex justify-between pb-2"><span class="font-bold">Red Spider Mites</span><span>Increase humidity,
+              soap water spray</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW: Harvesting & Storage Tips -->
+    <section id="harvest" class="mb-10">
+      <div class="glass-card p-10 reveal text-center bg-gradient-to-r from-emerald-50/80 to-amber-50/80">
+        <div class="w-16 h-16 rounded-full bg-emerald-200 flex items-center justify-center mx-auto mb-5"><i
+            class="fa-solid fa-basket-shopping text-emerald-700 text-2xl"></i></div>
+        <h3 class="text-2xl font-bold text-emerald-800 mb-4" style="font-family: 'Poppins', sans-serif;">Harvesting &
+          Storage Secrets</h3>
+        <p class="text-slate-700 max-w-3xl mx-auto text-sm leading-relaxed">Pick leafy greens in morning for crispness.
+          Harvest tomatoes when fully coloured. Store root veggies in cool, dark place wrapped in newspaper. Never wash
+          before storing — moisture causes rot. For herbs like Mint & Coriander, store stems in water jar inside fridge.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3 mt-6">
+          <span class="text-xs bg-white/60 px-3 py-1.5 rounded-full text-emerald-700">📅 Best harvest time: Early
+            morning</span>
+          <span class="text-xs bg-white/60 px-3 py-1.5 rounded-full text-emerald-700">🔪 Use sharp, clean shears</span>
+          <span class="text-xs bg-white/60 px-3 py-1.5 rounded-full text-emerald-700">❄️ Refrigerate within 2
+            hours</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-emerald-900/90 backdrop-blur-sm py-5 border-t border-emerald-700/50 w-full"
+    style="margin-left: -90px; width: calc(100% + 90px); padding-left: 90px;">
+    <div class="text-center">
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-2">
+        <i class="fa-solid fa-leaf text-emerald-300 text-lg"></i>
+        <p class="text-white font-bold">UrbanRoots Platform</p>
+      </div>
+      <p class="text-emerald-100 text-sm">
+        🌱 Cultivating greener cities, one block at a time.
+      </p>
+      <div class="mt-3 pt-2 border-t border-emerald-700/50">
+        <p class="text-emerald-200/70 text-xs">© 2026 UrbanRoots — All rights reserved</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/navbar.js"></script>
+  <script src="js/botanical.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+    });
+  </script>
+</body>
+
+</html>

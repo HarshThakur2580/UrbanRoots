@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Garden | UrbanRoots</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Background setup */
+    .bg-fixed-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: url('images/dashboard-bg.png');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .blur-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* Modal styling */
+    .modal-glass {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      color: #1e293b;
+    }
+
+    .modal-input {
+      background: #f8fafc;
+      border: 1.5px solid #d1fae5;
+      color: #1e293b;
+      transition: all 0.2s;
+    }
+
+    .modal-input:focus {
+      border-color: #16a34a;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+      outline: none;
+    }
+
+    .modal-label {
+      color: #374151;
+      font-weight: 600;
+    }
+
+    /* Custom scrollbar for form */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="flex items-center justify-center p-4 sm:p-8">
+
+  <div class="bg-fixed-layer"></div>
+  <div class="blur-overlay"></div>
+
+  <!-- Centered Split Card -->
+  <div
+    class="bg-white/95 backdrop-blur-xl w-full max-w-5xl rounded-3xl shadow-2xl relative flex overflow-hidden animate-in h-[90vh]">
+    <a href="dashboard.html"
+      class="absolute top-5 right-5 text-slate-400 hover:text-rose-500 text-4xl leading-none transition-colors z-20"
+      title="Close">&times;</a>
+
+    <!-- Left side: Image -->
+    <div class="hidden md:block md:w-5/12 relative bg-emerald-100 shrink-0">
+
+      <!-- Image -->
+      <img src="images/cg.png" alt="Community Garden" class="absolute inset-0 w-full h-full object-cover" />
+
+      <!-- Gradient Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-emerald-900/20 to-transparent"></div>
+
+      <!-- Text Content -->
+      <div class="absolute bottom-8 left-8 right-8">
+        <h3 class="text-white text-3xl font-bold mb-2 font-[Poppins]">
+          Cultivate Community
+        </h3>
+        <p class="text-emerald-50 font-medium text-sm">
+          Register a new garden space and invite others to grow with you.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Right side: Form -->
+    <div class="w-full md:w-7/12 p-8 sm:p-12 overflow-y-auto custom-scrollbar">
+      <div class="mb-8">
+        <h2 class="text-3xl font-bold text-emerald-600 mb-1" style="font-family: 'Poppins', sans-serif;">Register a
+          Garden <i class="fa-solid fa-house"></i></h2>
+        <p class="text-slate-500 text-sm font-medium">Add a new green space to the UrbanRoots network.</p>
+      </div>
+
+      <form id="addGardenForm" class="space-y-5">
+        <div id="statusMsg" class="hidden p-3 rounded-xl text-sm text-center font-bold"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm modal-label mb-2">Garden Name</label>
+            <input type="text" id="name" required class="w-full modal-input rounded-xl px-4 py-2.5"
+              placeholder="e.g. Hope Community Garden">
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Type</label>
+            <select id="type" required class="w-full modal-input rounded-xl px-4 py-2.5 cursor-pointer">
+              <option value="Community Garden">Community Garden</option>
+              <option value="Rooftop">Rooftop</option>
+              <option value="Balcony">Balcony</option>
+              <option value="Backyard">Backyard</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm modal-label mb-2">Description</label>
+          <textarea id="description" rows="3" required class="w-full modal-input rounded-xl px-4 py-2.5 resize-none"
+            placeholder="What makes this garden special?"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm modal-label mb-2">Address</label>
+            <input type="text" id="address" class="w-full modal-input rounded-xl px-4 py-2.5"
+              placeholder="e.g. 123 Green St, Mumbai">
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Contact Number</label>
+            <input type="tel" id="phone" class="w-full modal-input rounded-xl px-4 py-2.5"
+              placeholder="e.g. +91 9876543210">
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-end mb-2">
+            <label class="block text-sm modal-label">Garden Coordinates</label>
+            <button type="button" id="detectCoordsBtn"
+              class="text-xs bg-emerald-100 hover:bg-emerald-500 text-emerald-700 hover:text-white px-3 py-1.5 rounded-lg transition-colors font-bold inline-flex items-center gap-1 shadow-sm">
+              <i class="fa-solid fa-location-dot"></i> Auto-Detect
+            </button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <input type="number" step="any" id="lat" required class="w-full modal-input rounded-xl px-4 py-2.5"
+              placeholder="Latitude (e.g. 40.712)">
+            <input type="number" step="any" id="lng" required class="w-full modal-input rounded-xl px-4 py-2.5"
+              placeholder="Longitude (e.g. -74.006)">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm modal-label mb-2">Garden Photos</label>
+          <input type="file" id="images" accept="image/*" multiple
+            class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 transition-colors cursor-pointer">
+          <p class="text-xs text-slate-400 mt-2 font-medium">Upload up to 5 images.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div>
+            <label class="block text-sm modal-label mb-2">Opening Time</label>
+            <input type="time" id="openingTime" required class="w-full modal-input rounded-xl px-4 py-2.5">
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Closing Time</label>
+            <input type="time" id="closingTime" required class="w-full modal-input rounded-xl px-4 py-2.5">
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Entry Fee (₹)</label>
+            <input type="number" id="entryFee" value="0" min="0" class="w-full modal-input rounded-xl px-4 py-2.5">
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white rounded-xl px-4 py-3.5 font-bold transition-all shadow-lg shadow-emerald-500/20 mt-8 text-lg tracking-wide uppercase">
+          Add Garden
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('detectCoordsBtn').addEventListener('click', () => {
+      const latInput = document.getElementById('lat');
+      const lngInput = document.getElementById('lng');
+      const btn = document.getElementById('detectCoordsBtn');
+      const origHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> Detecting...';
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            latInput.value = position.coords.latitude;
+            lngInput.value = position.coords.longitude;
+            btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> Detected!';
+            setTimeout(() => btn.innerHTML = origHTML, 2000);
+          },
+          (err) => {
+            showToast('Location access denied.', 'warn');
+            btn.innerHTML = origHTML;
+          }
+        );
+      } else {
+        showToast('Geolocation is not supported.', 'error');
+        btn.innerHTML = origHTML;
+      }
+    });
+
+    document.getElementById('addGardenForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('name', document.getElementById('name').value);
+      formData.append('type', document.getElementById('type').value);
+      formData.append('description', document.getElementById('description').value);
+      formData.append('address', document.getElementById('address').value);
+      formData.append('phone', document.getElementById('phone').value);
+      formData.append('lat', document.getElementById('lat').value);
+      formData.append('lng', document.getElementById('lng').value);
+      formData.append('openingTime', document.getElementById('openingTime').value);
+      formData.append('closingTime', document.getElementById('closingTime').value);
+      formData.append('entryFee', document.getElementById('entryFee').value);
+
+      const files = document.getElementById('images').files;
+      for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+      }
+
+      const statusMsg = document.getElementById('statusMsg');
+      const btn = e.target.querySelector('button[type="submit"]');
+      const origText = btn.textContent;
+
+      try {
+        btn.textContent = 'Uploading...';
+        btn.disabled = true;
+        statusMsg.className = 'p-3 rounded-xl text-sm text-center font-bold bg-blue-50 text-blue-600 border border-blue-200';
+        statusMsg.classList.remove('hidden');
+        statusMsg.textContent = 'Creating garden...';
+
+        const res = await fetch('http://localhost:5000/api/gardens', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Failed to add garden');
+
+        statusMsg.className = 'p-3 rounded-xl text-sm text-center font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        statusMsg.textContent = '<i class="fa-solid fa-check"></i> Garden added successfully!';
+
+        setTimeout(() => window.location.href = 'dashboard.html', 1500);
+
+      } catch (err) {
+        statusMsg.className = 'p-3 rounded-xl text-sm text-center font-bold bg-red-50 text-red-600 border border-red-200';
+        statusMsg.textContent = '<i class="fa-solid fa-xmark"></i> ' + err.message;
+        btn.textContent = origText;
+        btn.disabled = false;
+      }
+    });
+  </script>
+  <script src="js/notifications.js"></script>
+</body>
+
+</html>

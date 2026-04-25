@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plant Marketplace | UrbanRoots</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-image: url('images/dashboard-bg.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-color: #f0fdf4;
+      color: #1e293b;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in {
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
+    .modal-glass {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 1);
+    }
+    .modal-input {
+      background: #f8fafc;
+      border: 1.5px solid #d1fae5;
+      transition: all 0.2s;
+    }
+    .modal-input:focus {
+      border-color: #16a34a;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+      outline: none;
+    }
+    .modal-label { color: #374151; font-weight: 600; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+    /* Slideshow Styles */
+    .slides-container {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      width: 100%;
+      height: 100%;
+    }
+    .slide {
+      min-width: 100%;
+      height: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <a href="index.html" class="flex items-center gap-3 text-emerald-800 text-xl font-bold" style="font-family: 'Poppins', sans-serif;">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-emerald-500 bg-white/50 backdrop-blur-md">
+            <i class="fa-solid fa-leaf text-emerald-500"></i></div>
+          UrbanRoots
+        </a>
+        <div class="flex items-center space-x-6">
+          <a href="gardens.html" class="text-sm font-bold uppercase tracking-wider text-slate-600 hover:text-emerald-600 transition-colors">Gardens</a>
+          <a href="knowledge.html" class="text-sm font-bold uppercase tracking-wider text-slate-600 hover:text-emerald-600 transition-colors">Knowledge <i class="fa-solid fa-robot"></i></a>
+          <a href="dashboard.html" class="text-sm font-bold uppercase tracking-wider text-slate-600 hover:text-emerald-600 transition-colors">Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6 animate-in">
+      <div>
+        <h1 class="text-4xl font-bold text-emerald-800" style="font-family: 'Poppins', sans-serif;">Plant Marketplace</h1>
+        <p class="text-slate-600 font-medium mt-2">Buy, sell, and trade plants with your local community.</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+        <div class="relative w-full sm:w-72">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <span class="text-emerald-500 text-lg">🔍</span>
+          </div>
+          <input type="text" id="searchInput" class="modal-input w-full pl-10 pr-4 py-3 rounded-xl font-medium shadow-sm" placeholder="Search plants by name..." autocomplete="off">
+          <ul id="suggestionsBox" class="hidden absolute z-50 w-full mt-2 bg-white/95 backdrop-blur-xl border border-emerald-100 rounded-xl shadow-xl max-h-60 overflow-y-auto overflow-x-hidden divide-y divide-slate-100"></ul>
+        </div>
+
+        <button onclick="document.getElementById('sellModal').classList.remove('hidden')" class="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+          <span class="text-lg leading-none">+</span> Sell a Plant
+        </button>
+      </div>
+    </div>
+
+    <div class="flex gap-4 mb-8 border-b border-emerald-100/30 pb-4 overflow-x-auto animate-in">
+      <button onclick="switchTab('all')" id="tab-all" class="bg-emerald-500 text-white px-6 py-2 rounded-full font-bold shadow-lg shadow-emerald-500/20 transition-all">All Plants</button>
+      <button onclick="switchTab('my')" id="tab-my" class="bg-white/50 text-slate-600 hover:bg-white hover:text-emerald-600 px-6 py-2 rounded-full font-bold transition-all hidden">My Listings</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="plantsGrid">
+      <div class="col-span-full text-center py-16 glass-card rounded-2xl animate-in delay-1">
+        <div class="text-4xl mb-4 animate-pulse drop-shadow-md"><i class="fa-solid fa-leaf text-emerald-500"></i></div>
+        <p class="text-slate-500 font-bold text-lg animate-pulse">Loading marketplace...</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-emerald-900/90 backdrop-blur-sm py-5 border-t border-emerald-700/50 w-full"
+    style="margin-left: -90px; width: calc(100% + 90px); padding-left: 90px;">
+    <div class="text-center">
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-2">
+        <i class="fa-solid fa-leaf text-emerald-300 text-lg"></i>
+        <p class="text-white font-bold">UrbanRoots Platform</p>
+      </div>
+      <p class="text-emerald-100 text-sm">
+        🌱 Cultivating greener cities, one block at a time.
+      </p>
+      <div class="mt-3 pt-2 border-t border-emerald-700/50">
+        <p class="text-emerald-200/70 text-xs">© 2026 UrbanRoots — All rights reserved</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal for Editing Plant -->
+  <div id="editModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex justify-center items-center p-4 sm:p-8 transition-opacity">
+    <div class="bg-white/95 backdrop-blur-xl w-full max-w-4xl rounded-3xl shadow-2xl relative flex overflow-hidden animate-in">
+      <button onclick="document.getElementById('editModal').classList.add('hidden')" class="absolute top-5 right-5 text-slate-400 hover:text-rose-500 text-4xl leading-none transition-colors z-20">&times;</button>
+      
+      <div class="hidden md:block md:w-5/12 relative bg-emerald-100 shrink-0">
+        <img id="editPreview" src="images/bm.png" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-emerald-900/20 to-transparent"></div>
+        <div class="absolute bottom-8 left-8 right-8">
+          <h3 class="text-white text-3xl font-bold mb-2" style="font-family: 'Poppins', sans-serif;">Update Listing</h3>
+          <p class="text-emerald-50 font-medium text-sm">Keep your plant details accurate for the community.</p>
+        </div>
+      </div>
+
+      <div class="w-full md:w-7/12 p-8 sm:p-12 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold text-emerald-600 mb-1" style="font-family: 'Poppins', sans-serif;">Edit Plant <i class="fa-solid fa-pen-to-square"></i></h2>
+        </div>
+
+        <form id="editForm" class="space-y-5">
+          <input type="hidden" id="editId">
+          <div>
+            <label class="block text-sm modal-label mb-2">Plant Name</label>
+            <input type="text" id="editName" required class="w-full modal-input rounded-xl px-4 py-2.5">
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Price (₹)</label>
+            <input type="number" id="editPrice" required min="0" class="w-full modal-input rounded-xl px-4 py-2.5">
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Description</label>
+            <textarea id="editDesc" required rows="3" class="w-full modal-input rounded-xl px-4 py-2.5 resize-none"></textarea>
+          </div>
+          <div class="flex items-center gap-3 bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+            <input type="checkbox" id="editInStock" class="w-5 h-5 accent-emerald-600 cursor-pointer">
+            <label for="editInStock" class="font-bold text-emerald-800 cursor-pointer">In Stock</label>
+            <p class="text-xs text-emerald-600/70 ml-auto">Uncheck if product is sold out</p>
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Add More Photos (Up to 5 total)</label>
+            <input type="file" id="editImages" accept="image/*" multiple class="w-full text-sm">
+          </div>
+          <button type="submit" class="w-full bg-emerald-500 text-white rounded-xl px-4 py-3.5 font-bold shadow-lg shadow-emerald-500/20 mt-8 text-lg uppercase">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Selling Plant -->
+  <div id="sellModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex justify-center items-center p-4 sm:p-8 transition-opacity">
+    <div class="bg-white/95 backdrop-blur-xl w-full max-w-4xl rounded-3xl shadow-2xl relative flex overflow-hidden animate-in">
+      <button onclick="document.getElementById('sellModal').classList.add('hidden')" class="absolute top-5 right-5 text-slate-400 hover:text-rose-500 text-4xl leading-none transition-colors z-20">&times;</button>
+      
+      <div class="hidden md:block md:w-5/12 relative bg-emerald-100 shrink-0">
+        <img src="images/bm.png" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-emerald-900/20 to-transparent"></div>
+        <div class="absolute bottom-8 left-8 right-8">
+          <h3 class="text-white text-3xl font-bold mb-2" style="font-family: 'Poppins', sans-serif;">Share Your Greens</h3>
+          <p class="text-emerald-50 font-medium text-sm">Help the community grow by trading or selling your plants.</p>
+        </div>
+      </div>
+
+      <div class="w-full md:w-7/12 p-8 sm:p-12 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold text-emerald-600 mb-1" style="font-family: 'Poppins', sans-serif;">List a Plant <i class="fa-solid fa-seedling"></i></h2>
+          <p class="text-slate-500 text-sm font-medium">Add a new plant to the community marketplace.</p>
+        </div>
+
+        <form id="sellForm" class="space-y-5">
+          <div id="statusMsg" class="hidden p-3 rounded-xl text-sm text-center font-bold"></div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Plant Name</label>
+            <input type="text" id="pName" required class="w-full modal-input rounded-xl px-4 py-2.5" placeholder="e.g. Monstera Deliciosa">
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Price (₹) <span class="text-slate-400 font-normal">[0 for free/trade]</span></label>
+            <input type="number" id="pPrice" required value="0" min="0" class="w-full modal-input rounded-xl px-4 py-2.5">
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Description</label>
+            <textarea id="pDesc" required rows="3" class="w-full modal-input rounded-xl px-4 py-2.5 resize-none" placeholder="Describe the condition, size, and care instructions..."></textarea>
+          </div>
+          <div>
+            <label class="block text-sm modal-label mb-2">Photos (Up to 5)</label>
+            <input type="file" id="pImages" accept="image/*" multiple class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 transition-colors cursor-pointer">
+          </div>
+          <button type="submit" class="w-full bg-emerald-500 text-white rounded-xl px-4 py-3.5 font-bold shadow-lg shadow-emerald-500/20 mt-8 text-lg uppercase">List for Sale</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allPlants = []; 
+    let myListings = [];
+    let currentTab = 'all';
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem('token');
+      if (token) document.getElementById('tab-my').classList.remove('hidden');
+      fetchPlants();
+    });
+
+    function switchTab(tab) {
+      currentTab = tab;
+      const allBtn = document.getElementById('tab-all');
+      const myBtn = document.getElementById('tab-my');
+      if (tab === 'all') {
+        allBtn.className = "bg-emerald-500 text-white px-6 py-2 rounded-full font-bold shadow-lg shadow-emerald-500/20 transition-all";
+        myBtn.className = "bg-white/50 text-slate-600 hover:bg-white hover:text-emerald-600 px-6 py-2 rounded-full font-bold transition-all";
+        renderPlants(allPlants);
+      } else {
+        myBtn.className = "bg-emerald-500 text-white px-6 py-2 rounded-full font-bold shadow-lg shadow-emerald-500/20 transition-all";
+        allBtn.className = "bg-white/50 text-slate-600 hover:bg-white hover:text-emerald-600 px-6 py-2 rounded-full font-bold transition-all";
+        fetchMyListings();
+      }
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsBox = document.getElementById('suggestionsBox');
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const baseList = currentTab === 'all' ? allPlants : myListings;
+      renderPlants(baseList.filter(p => p.name.toLowerCase().includes(query)), currentTab === 'my');
+    });
+
+    async function fetchPlants() {
+      try {
+        const res = await fetch('http://localhost:5000/api/plants');
+        allPlants = await res.json();
+        if (currentTab === 'all') renderPlants(allPlants);
+      } catch (e) { console.error(e); }
+    }
+
+    async function fetchMyListings() {
+      const token = localStorage.getItem('token');
+      try {
+        const res = await fetch('http://localhost:5000/api/plants/my', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        myListings = await res.json();
+        renderPlants(myListings, true);
+      } catch (e) { console.error(e); }
+    }
+
+    function renderPlants(plantsArray, isMyListing = false) {
+      const grid = document.getElementById('plantsGrid');
+      grid.innerHTML = '';
+      if (plantsArray.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-16 glass-card rounded-2xl animate-in"><p class="text-slate-700 font-bold mb-1">No plants found.</p></div>`;
+        return;
+      }
+
+      plantsArray.forEach((plant, index) => {
+        const defaultImg = "https://images.unsplash.com/photo-1416879598553-33bc2143df5e?auto=format&fit=crop&q=80&w=400";
+        const images = (plant.images && plant.images.length > 0) ? plant.images : (plant.image ? [plant.image] : [defaultImg]);
+        const delayClass = `delay-${(index % 4) + 1}`;
+        const isFree = plant.price === 0;
+
+        grid.innerHTML += `
+          <div class="glass-card overflow-hidden hover:-translate-y-2 transition-all duration-300 flex flex-col group animate-in ${delayClass} border-white/80 hover:border-emerald-300 relative">
+            <div class="h-48 overflow-hidden relative slideshow-parent" data-id="${plant._id}">
+              <div class="slides-container" id="slides-${plant._id}">
+                ${images.map(img => `<img src="${img}" class="slide object-cover ${!plant.inStock ? 'grayscale-[0.6] opacity-80' : ''}">`).join('')}
+              </div>
+              
+              ${images.length > 1 ? `
+                <button onclick="moveSlide('${plant._id}', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm z-30 transition-all opacity-0 group-hover:opacity-100"><i class="fa-solid fa-chevron-left"></i></button>
+                <button onclick="moveSlide('${plant._id}', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm z-30 transition-all opacity-0 group-hover:opacity-100"><i class="fa-solid fa-chevron-right"></i></button>
+                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-30">
+                  ${images.map((_, i) => `<div class="w-1.5 h-1.5 rounded-full bg-white/40 ${i === 0 ? 'bg-white scale-125' : ''}" id="dot-${plant._id}-${i}"></div>`).join('')}
+                </div>
+              ` : ''}
+
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent pointer-events-none"></div>
+              ${!plant.inStock ? `<div class="absolute top-4 left-4 bg-rose-500/90 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase shadow-lg z-20">Sold Out</div>` : ''}
+              <div class="absolute top-4 right-4 ${isFree ? 'bg-emerald-500 text-white' : 'bg-white/90 text-emerald-800'} backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold shadow-md z-20">
+                ${isFree ? 'Free' : '₹' + plant.price}
+              </div>
+            </div>
+            <div class="p-5 flex-grow flex flex-col justify-between">
+              <div>
+                <h3 class="font-bold text-lg text-emerald-800 mb-1 truncate">${plant.name}</h3>
+                <p class="text-xs text-slate-500 font-medium line-clamp-2 mb-4 h-8">${plant.description}</p>
+                ${isMyListing ? `
+                  <div class="flex items-center gap-2 mb-4 bg-emerald-50 py-1.5 px-3 rounded-lg border border-emerald-100">
+                    <span class="text-[10px] font-black text-emerald-700 uppercase tracking-wider"><i class="fa-solid fa-users-viewfinder mr-1"></i> ${plant.contactCount || 0} Inquiries</span>
+                  </div>
+                ` : `
+                  <div class="flex items-center gap-2 mb-4">
+                    <img src="https://ui-avatars.com/api/?name=${plant.seller?.name || 'U'}&background=10b981&color=fff" class="w-6 h-6 rounded-full">
+                    <p class="text-xs text-slate-600 font-semibold truncate">By ${plant.seller?.name || 'Unknown'}</p>
+                  </div>
+                `}
+              </div>
+              ${isMyListing ? `
+                <div class="flex gap-2">
+                  <button onclick="openEditModal('${plant._id}')" class="flex-grow bg-emerald-50 text-emerald-700 py-2 rounded-xl text-xs font-bold border border-emerald-200">Edit</button>
+                  <button onclick="deleteListing('${plant._id}')" class="bg-rose-50 text-rose-600 px-3 py-2 rounded-xl text-xs border border-rose-100">Delete</button>
+                </div>
+              ` : `
+                <button onclick="requestPlant('${plant._id}', '${plant.seller?._id}')" ${!plant.inStock ? 'disabled' : ''} class="w-full ${!plant.inStock ? 'opacity-50' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'} py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
+                  <i class="fa-regular fa-comment"></i> ${plant.inStock ? 'Contact Seller' : 'Sold Out'}
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    const slideIndexes = {};
+    window.moveSlide = (plantId, dir) => {
+      if (!slideIndexes[plantId]) slideIndexes[plantId] = 0;
+      const container = document.getElementById(`slides-${plantId}`);
+      const slidesCount = container.children.length;
+      slideIndexes[plantId] = (slideIndexes[plantId] + dir + slidesCount) % slidesCount;
+      container.style.transform = `translateX(-${slideIndexes[plantId] * 100}%)`;
+      for(let i=0; i<slidesCount; i++) {
+        const dot = document.getElementById(`dot-${plantId}-${i}`);
+        if(dot) {
+          dot.className = `w-1.5 h-1.5 rounded-full ${i === slideIndexes[plantId] ? 'bg-white scale-125' : 'bg-white/40'}`;
+        }
+      }
+    };
+
+    document.getElementById('sellForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('name', document.getElementById('pName').value);
+      formData.append('price', document.getElementById('pPrice').value);
+      formData.append('description', document.getElementById('pDesc').value);
+      const imgInput = document.getElementById('pImages');
+      for (let i = 0; i < imgInput.files.length; i++) formData.append('images', imgInput.files[i]);
+
+      try {
+        const res = await fetch('http://localhost:5000/api/plants', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+        if (res.ok) {
+          showToast('Plant listed successfully!', 'success');
+          document.getElementById('sellModal').classList.add('hidden');
+          e.target.reset();
+          fetchPlants();
+        }
+      } catch (err) { showToast(err.message, 'error'); }
+    });
+
+    window.openEditModal = (id) => {
+      const plant = myListings.find(p => p._id === id);
+      if (!plant) return;
+      document.getElementById('editId').value = plant._id;
+      document.getElementById('editName').value = plant.name;
+      document.getElementById('editPrice').value = plant.price;
+      document.getElementById('editDesc').value = plant.description;
+      document.getElementById('editInStock').checked = plant.inStock;
+      document.getElementById('editPreview').src = (plant.images && plant.images.length > 0) ? plant.images[0] : (plant.image || "images/bm.png");
+      document.getElementById('editModal').classList.remove('hidden');
+    };
+
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editId').value;
+      const formData = new FormData();
+      formData.append('name', document.getElementById('editName').value);
+      formData.append('price', document.getElementById('editPrice').value);
+      formData.append('description', document.getElementById('editDesc').value);
+      formData.append('inStock', document.getElementById('editInStock').checked);
+      const imgInput = document.getElementById('editImages');
+      for (let i = 0; i < imgInput.files.length; i++) formData.append('images', imgInput.files[i]);
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/plants/${id}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body: formData
+        });
+        if (res.ok) {
+          showToast('Listing updated!', 'success');
+          document.getElementById('editModal').classList.add('hidden');
+          fetchMyListings(); fetchPlants();
+        }
+      } catch (err) { showToast(err.message, 'error'); }
+    });
+
+    window.deleteListing = async (id) => {
+      showConfirm('Delete this listing?', async () => {
+        try {
+          const res = await fetch(`http://localhost:5000/api/plants/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          });
+          if (res.ok) { showToast('Deleted', 'success'); fetchMyListings(); fetchPlants(); }
+        } catch (err) { showToast(err.message, 'error'); }
+      });
+    };
+
+    async function requestPlant(targetId, ownerId) {
+      const token = localStorage.getItem('token');
+      if (!token) { showToast('Login to contact seller', 'warn'); return; }
+      showConfirm('Contact seller about this plant?', async () => {
+        try {
+          const res = await fetch('http://localhost:5000/api/requests', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'Plant Purchase', targetId, targetModel: 'Plant', ownerId })
+          });
+          if (res.ok) showToast('Request sent!', 'success');
+        } catch (err) { showToast(err.message, 'error'); }
+      });
+    }
+  </script>
+  <script src="js/notifications.js"></script>
+  <script src="js/navbar.js"></script>
+</body>
+</html>

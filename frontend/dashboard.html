@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | UrbanRoots</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      /* Use the new beautiful botanical background image */
+      background-image: url('images/dashboard-bg.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-color: #f0fdf4;
+      /* Fallback */
+      color: #1e293b;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Light Theme Glassmorphism */
+    .glass {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.3s;
+    }
+
+    /* Tabs */
+    .tab-btn {
+      position: relative;
+      color: #64748b;
+      transition: color 0.3s ease;
+    }
+
+    .tab-btn.active {
+      color: #10b981;
+      font-weight: 700;
+    }
+
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background-color: #10b981;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .tab-btn.active::after {
+      width: 100%;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Modal styling */
+    .modal-glass {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 1);
+      color: #1e293b;
+    }
+
+    .modal-input {
+      background: #f8fafc;
+      border: 1.5px solid #d1fae5;
+      color: #1e293b;
+    }
+
+    .modal-input:focus {
+      border-color: #16a34a;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+    }
+
+    .modal-label {
+      color: #374151;
+      font-weight: 600;
+    }
+
+    /* Custom scrollbar for forms */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* Weather Animations */
+    .weather-scene {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 18px;
+      background: linear-gradient(to bottom, #7dd3fc, #bae6fd);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .weather-scene.night {
+      background: linear-gradient(to bottom, #1e293b, #334155);
+    }
+    
+    .sun {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      background: #fbbf24;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+      animation: sunPulse 4s ease-in-out infinite;
+      z-index: 2;
+    }
+    .sun-rays {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      animation: rotateRays 20s linear infinite;
+      z-index: 1;
+    }
+    .sun-rays span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 44px;
+      background: rgba(251, 191, 36, 0.3);
+    }
+    .sun-rays span:nth-child(2) { transform: translate(-50%, -50%) rotate(45deg); }
+    .sun-rays span:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg); }
+    .sun-rays span:nth-child(4) { transform: translate(-50%, -50%) rotate(135deg); }
+
+    .moon-crescent {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      box-shadow: 7px 7px 0 0 #f1f5f9;
+      transform: rotate(-45deg) translate(-6px, -6px);
+      z-index: 2;
+      filter: drop-shadow(0 0 8px rgba(241, 245, 249, 0.5));
+    }
+
+    .cloud {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+      z-index: 3;
+      animation: floatCloud linear infinite;
+    }
+    .cloud-1 { top: 8px; font-size: 24px; animation-duration: 12s; }
+    .cloud-2 { bottom: 8px; font-size: 18px; animation-duration: 18s; animation-delay: -5s; }
+
+    @keyframes sunPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
+      50% { transform: scale(1.15); box-shadow: 0 0 30px rgba(251, 191, 36, 0.8); }
+    }
+    @keyframes rotateRays { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes floatCloud {
+      from { transform: translateX(-70px); }
+      to { transform: translateX(70px); }
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <a href="index.html" class="flex items-center gap-3 text-emerald-800 text-xl font-bold"
+          style="font-family: 'Poppins', sans-serif;">
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-emerald-500 bg-white/50 backdrop-blur-md">
+            <i class="fa-solid fa-leaf text-emerald-500"></i>
+          </div>
+          UrbanRoots
+        </a>
+        <div class="flex items-center space-x-6">
+          <a href="gardens.html"
+            class="text-sm font-bold uppercase tracking-wider text-slate-600 hover:text-emerald-600 transition-colors">Gardens</a>
+          <button onclick="logout()"
+            class="text-sm font-bold uppercase tracking-wider text-rose-600 hover:text-white transition-colors bg-rose-100 hover:bg-rose-500 px-5 py-2 rounded-full border border-rose-200">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Welcome Header -->
+    <div class="mb-10 animate-in">
+      <h1 class="text-4xl font-bold text-slate-800 mb-2" style="font-family: 'Poppins', sans-serif;">Welcome back, <span
+          id="welcome-name" class="text-emerald-600">Gardener</span>! <i class="fa-solid fa-seedling"></i></h1>
+      <p class="text-slate-600 font-medium">Manage your profile, gardens, and community requests.</p>
+    </div>
+
+    <div class="user-only grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+      <!-- LEFT SIDEBAR -->
+      <div class="lg:col-span-4 space-y-6">
+
+        <!-- Profile Card -->
+        <div class="glass-card p-8 text-center animate-in delay-1 relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-emerald-200/50 to-transparent"></div>
+
+          <div class="relative z-10">
+            <div class="relative inline-block mb-4">
+              <img id="profile-img" src="https://ui-avatars.com/api/?name=U&background=10b981&color=fff" alt="Profile"
+                class="w-32 h-32 rounded-full border-4 border-white object-cover shadow-xl">
+              <div
+                class="absolute bottom-1 right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center text-[10px]"
+                title="Active"></div>
+            </div>
+
+            <h2 id="user-name" class="text-2xl font-bold text-slate-800 mb-1"
+              style="font-family: 'Poppins', sans-serif;">Loading...</h2>
+            <p class="flex items-center justify-center gap-2 text-slate-500 text-sm font-medium mb-6">
+              <span><i class="fa-solid fa-location-dot"></i></span> <span id="user-location">Locating...</span>
+            </p>
+
+            <button onclick="document.getElementById('editProfileModal').classList.remove('hidden')"
+              class="w-full bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white border border-emerald-200 hover:border-emerald-500 py-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-sm">
+              Edit Profile
+            </button>
+          </div>
+        </div>
+
+        <!-- Weather Widget -->
+        <div class="glass-card p-6 animate-in delay-2">
+          <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><span>⛅</span> Local Weather</h3>
+          <div id="weather-container" class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div id="weather-icon" class="text-4xl drop-shadow-md"><i class="fa-solid fa-hourglass-half"></i></div>
+              <div>
+                <p id="weather-temp" class="text-3xl font-bold text-slate-800">--°C</p>
+                <p id="weather-desc" class="text-sm font-medium text-emerald-600 capitalize">Fetching data...</p>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 mt-4 text-center font-medium">Powered by Open-Meteo</p>
+        </div>
+
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="lg:col-span-8 space-y-8">
+
+        <!-- My Gardens Section -->
+        <div class="glass-card p-8 animate-in delay-2">
+          <div class="flex justify-between items-center mb-8 border-b border-emerald-100 pb-4">
+            <h3 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span><i
+                  class="fa-solid fa-house"></i></span> My Gardens</h3>
+            <a href="add-garden.html"
+              class="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-2">
+              <span>+</span> Add Garden
+            </a>
+          </div>
+          <div id="my-gardens-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="text-center py-8 col-span-full">
+              <p class="text-slate-500 font-medium">Loading your gardens...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Requests Section -->
+        <div class="glass-card p-8 animate-in delay-3">
+          <div class="flex items-center justify-between mb-6 border-b border-emerald-100 pb-4">
+            <h3 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span>📬</span> Requests</h3>
+          </div>
+
+          <!-- Tabs -->
+          <div class="flex gap-8 mb-6">
+            <button class="tab-btn active text-lg pb-2 focus:outline-none font-medium"
+              onclick="switchTab('pending')">Pending Requests <span id="pending-count"
+                class="bg-rose-500 text-white text-xs px-2 py-0.5 rounded-full ml-1 hidden font-bold">0</span></button>
+            <button class="tab-btn text-lg pb-2 focus:outline-none font-medium" onclick="switchTab('accepted')">Accepted
+              Requests</button>
+          </div>
+
+          <!-- Tab Contents -->
+          <div class="relative min-h-[200px]">
+            <!-- Pending -->
+            <div id="tab-pending" class="tab-content active space-y-4">
+              <div id="pendingRequestsContainer" class="space-y-4">
+                <div class="text-center py-8">
+                  <p class="text-slate-500 font-medium">Loading requests...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Accepted -->
+            <div id="tab-accepted" class="tab-content space-y-4">
+              <div id="acceptedRequestsContainer" class="space-y-4">
+                <div class="text-center py-8">
+                  <p class="text-slate-500 font-medium">No accepted requests yet.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div> <!-- Closes user-only grid -->
+
+    <!-- Admin Dashboard Section -->
+    <div id="admin-dashboard-section" class="hidden animate-in mt-2 w-full">
+      <div class="glass-card p-8 border-t-4 border-t-emerald-500 mb-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
+          <div>
+            <h2 class="text-3xl font-bold text-slate-800 mb-2" style="font-family: 'Poppins', sans-serif;">Platform
+              Overview</h2>
+            <p class="text-slate-500 font-medium">Manage all resources and enforce community guidelines.</p>
+          </div>
+          <div class="w-full md:w-1/3">
+            <div class="relative">
+              <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="text" id="admin-search" autocomplete="off" placeholder="Search everywhere..."
+                class="w-full bg-white border border-slate-200 rounded-full py-3 pl-12 pr-4 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all font-medium text-sm">
+              <div id="admin-search-suggestions"
+                class="hidden absolute top-full left-0 w-full mt-2 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200 z-50 max-h-60 overflow-y-auto custom-scrollbar overflow-hidden">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white/60 p-6 rounded-2xl border border-white shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-slate-500 text-sm font-bold uppercase tracking-wide mb-1">Total Users</p>
+              <p id="admin-users-count" class="text-3xl font-black text-slate-800">--</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl"><i
+                class="fa-solid fa-users"></i></div>
+          </div>
+          <div class="bg-white/60 p-6 rounded-2xl border border-white shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-slate-500 text-sm font-bold uppercase tracking-wide mb-1">Total Gardens</p>
+              <p id="admin-gardens-count" class="text-3xl font-black text-slate-800">--</p>
+            </div>
+            <div
+              class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl"><i
+                class="fa-solid fa-seedling"></i></div>
+          </div>
+          <div class="bg-white/60 p-6 rounded-2xl border border-white shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-slate-500 text-sm font-bold uppercase tracking-wide mb-1">Total Posts</p>
+              <p id="admin-posts-count" class="text-3xl font-black text-slate-800">--</p>
+            </div>
+            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xl">
+              <i class="fa-solid fa-comments"></i></div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex flex-wrap gap-3 border-b border-slate-200 pb-4 mb-6">
+          <button
+            class="admin-tab-btn bg-emerald-500 text-white shadow-md px-5 py-2 rounded-full text-sm font-bold transition-all"
+            data-tab="users" onclick="switchAdminTab('users')"><i class="fa-solid fa-users mr-2"></i> Users</button>
+          <button
+            class="admin-tab-btn bg-white text-slate-600 hover:bg-emerald-50 px-5 py-2 rounded-full text-sm font-bold transition-all border border-slate-200"
+            data-tab="gardens" onclick="switchAdminTab('gardens')"><i class="fa-solid fa-seedling mr-2"></i>
+            Gardens</button>
+          <button
+            class="admin-tab-btn bg-white text-slate-600 hover:bg-emerald-50 px-5 py-2 rounded-full text-sm font-bold transition-all border border-slate-200"
+            data-tab="posts" onclick="switchAdminTab('posts')"><i class="fa-solid fa-comment-dots mr-2"></i>
+            Posts</button>
+          <button
+            class="admin-tab-btn bg-white text-slate-600 hover:bg-emerald-50 px-5 py-2 rounded-full text-sm font-bold transition-all border border-slate-200"
+            data-tab="plants" onclick="switchAdminTab('plants')"><i class="fa-solid fa-store mr-2"></i>
+            Marketplace</button>
+          <button
+            class="admin-tab-btn bg-white text-slate-600 hover:bg-emerald-50 px-5 py-2 rounded-full text-sm font-bold transition-all border border-slate-200"
+            data-tab="events" onclick="switchAdminTab('events')"><i class="fa-solid fa-calendar-days mr-2"></i>
+            Events</button>
+        </div>
+
+        <!-- Data Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white/50">
+          <table class="w-full text-sm text-left">
+            <thead id="admin-table-head" class="bg-slate-100/80 text-slate-600 font-bold uppercase text-xs">
+              <!-- Headers injected via JS -->
+            </thead>
+            <tbody id="admin-table-body">
+              <!-- Rows injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </main>
+
+  <!-- Modal for Editing Garden -->
+  <div id="editGardenModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex justify-center items-center p-4 sm:p-8 transition-opacity">
+    <div class="bg-white/95 backdrop-blur-xl w-full max-w-4xl rounded-3xl shadow-2xl relative flex overflow-hidden animate-in">
+      <button onclick="document.getElementById('editGardenModal').classList.add('hidden')" class="absolute top-5 right-5 text-slate-400 hover:text-rose-500 text-4xl leading-none transition-colors z-20">&times;</button>
+      <div class="w-full p-8 sm:p-12 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <h2 class="text-3xl font-bold text-emerald-600 mb-6" style="font-family: 'Poppins', sans-serif;">Edit Garden Details</h2>
+        <form id="editGardenForm" class="space-y-5">
+          <input type="hidden" id="editGardenId">
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-2">Garden Name</label>
+            <input type="text" id="editGardenName" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-all">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-2">Description</label>
+            <textarea id="editGardenDesc" required rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-all resize-none"></textarea>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">Category</label>
+              <select id="editGardenType" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+                <option value="Community Garden">Community Garden</option>
+                <option value="Rooftop">Rooftop</option>
+                <option value="Balcony">Balcony</option>
+                <option value="Backyard">Backyard</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">Entry Fee (₹)</label>
+              <input type="number" id="editGardenFee" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">Opening Time</label>
+              <input type="time" id="editGardenOpening" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-all">
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-2">Closing Time</label>
+              <input type="time" id="editGardenClosing" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-all">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-2">Address</label>
+            <input type="text" id="editGardenAddress" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-all">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-2">Add Images (Up to 5)</label>
+            <input type="file" id="editGardenImages" multiple accept="image/*" class="w-full text-sm">
+          </div>
+          <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl px-4 py-4 font-bold transition-all shadow-lg shadow-emerald-500/20 mt-4 uppercase">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Delete Reason Modal -->
+  <div id="adminDeleteModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full relative z-10 shadow-2xl animate-in">
+      <div
+        class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-2xl mx-auto mb-4 border-4 border-white shadow-sm">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-center text-slate-800 mb-2" style="font-family: 'Poppins', sans-serif;">Delete
+        Content</h3>
+      <p class="text-center text-slate-500 font-medium mb-6 text-sm">Please provide a reason for deleting this content.
+        This will be emailed directly to the owner.</p>
+
+      <div class="mb-6">
+        <label class="block text-sm font-bold text-slate-700 mb-2">Reason for Deletion</label>
+        <textarea id="adminDeleteReason" rows="3"
+          class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-200 transition-all text-sm font-medium"
+          placeholder="E.g., Violation of community guidelines regarding inappropriate content..."></textarea>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="closeDeleteModal()"
+          class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors">Cancel</button>
+        <button id="adminConfirmDeleteBtn" onclick="confirmAdminDelete()"
+          class="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-rose-500/30">Confirm
+          Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal"
+    class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex justify-center items-center p-4 sm:p-8 transition-opacity">
+    <div
+      class="bg-white/95 backdrop-blur-xl w-full max-w-4xl rounded-3xl shadow-2xl relative flex overflow-hidden animate-in">
+      <button onclick="document.getElementById('editProfileModal').classList.add('hidden')"
+        class="absolute top-5 right-5 text-slate-400 hover:text-rose-500 text-4xl leading-none transition-colors z-20">&times;</button>
+
+      <!-- Left side: Image -->
+      <div class="hidden md:block md:w-5/12 relative bg-emerald-100 shrink-0">
+        <img src="images/edit.jpg" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-emerald-900/20 to-transparent"></div>
+        <div class="absolute bottom-8 left-8 right-8">
+          <h3 class="text-white text-3xl font-bold mb-2" style="font-family: 'Poppins', sans-serif;">Your Profile</h3>
+          <p class="text-emerald-50 font-medium text-sm">Keep your community identity fresh and updated.</p>
+        </div>
+      </div>
+
+      <!-- Right side: Form -->
+      <div class="w-full md:w-7/12 p-8 sm:p-12 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold text-emerald-600 mb-1" style="font-family: 'Poppins', sans-serif;">Edit Profile
+          </h2>
+          <p class="text-slate-500 text-sm font-medium">Update your personal details.</p>
+        </div>
+
+        <form id="editProfileForm" class="space-y-5">
+          <div>
+            <label class="block text-sm modal-label mb-2">Profile Picture</label>
+            <input type="file" id="epPic" accept="image/*"
+              class="w-full modal-input rounded-xl px-4 py-2.5 focus:outline-none transition-colors"
+              onchange="previewProfilePic(this)">
+            <div class="flex justify-start mt-3">
+              <img id="epPicPreview"
+                class="hidden w-20 h-20 rounded-full object-cover border-4 border-emerald-100 shadow-md">
+            </div>
+          </div>
+          <div id="epStatusMsg" class="hidden p-3 rounded-xl text-sm text-center font-bold"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div class="sm:col-span-2">
+              <label class="block text-sm modal-label mb-2">Name</label>
+              <input type="text" id="epName" required
+                class="w-full modal-input rounded-xl px-4 py-2.5 focus:outline-none transition-colors"
+                placeholder="Your full name">
+            </div>
+            <div>
+              <label class="block text-sm modal-label mb-2">Location</label>
+              <input type="text" id="epLocation"
+                class="w-full modal-input rounded-xl px-4 py-2.5 focus:outline-none transition-colors"
+                placeholder="City, State">
+            </div>
+            <div>
+              <label class="block text-sm modal-label mb-2">Phone</label>
+              <input type="tel" id="epPhone"
+                class="w-full modal-input rounded-xl px-4 py-2.5 focus:outline-none transition-colors"
+                placeholder="+1 234 567 890">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm modal-label mb-2">New Password <span
+                class="text-slate-400 font-normal">(optional)</span></label>
+            <input type="password" id="epPassword"
+              class="w-full modal-input rounded-xl px-4 py-2.5 focus:outline-none transition-colors"
+              placeholder="Leave blank to keep current">
+          </div>
+
+          <button type="submit" id="epSubmitBtn"
+            class="w-full bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white rounded-xl px-4 py-3.5 font-bold transition-all shadow-lg shadow-emerald-500/20 mt-8 text-lg tracking-wide uppercase">Save
+            Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/notifications.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    // Tab Switching Logic
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    // Weather Fetching Logic
+    async function fetchWeather(locationStr) {
+      const tempEl = document.getElementById('weather-temp');
+      const descEl = document.getElementById('weather-desc');
+      const iconEl = document.getElementById('weather-icon');
+
+      try {
+        const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationStr)}&format=json&limit=1`);
+        const geoData = await geoRes.json();
+
+        if (!geoData || geoData.length === 0) throw new Error("Location not found");
+
+        const lat = geoData[0].lat;
+        const lon = geoData[0].lon;
+
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);
+        const weatherData = await weatherRes.json();
+
+        if (weatherData && weatherData.current) {
+          const temp = Math.round(weatherData.current.temperature_2m);
+          const code = weatherData.current.weather_code;
+          const hour = new Date().getHours();
+          const isNight = hour < 6 || hour >= 18;
+
+          tempEl.textContent = `${temp}°C`;
+
+          let desc = 'Cloudy';
+          if (code === 0) desc = 'Clear sky';
+          else if (code >= 1 && code <= 3) desc = 'Partly cloudy';
+          else if (code >= 45 && code <= 48) desc = 'Foggy';
+          else if (code >= 51 && code <= 67) desc = 'Rainy';
+          else if (code >= 71 && code <= 82) desc = 'Snowy';
+          else if (code >= 95) desc = 'Stormy';
+
+          descEl.textContent = desc;
+          
+          // Inject Animated Scene
+          iconEl.innerHTML = `
+            <div class="weather-scene ${isNight ? 'night' : ''}">
+              ${isNight ? `
+                <div class="moon-crescent"></div>
+              ` : `
+                <div class="sun"></div>
+                <div class="sun-rays">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              `}
+              <i class="fa-solid fa-cloud cloud cloud-1"></i>
+              <i class="fa-solid fa-cloud cloud cloud-2"></i>
+            </div>
+          `;
+          iconEl.className = ""; // Remove previous text-4xl class if any
+        } else {
+          throw new Error("No weather data");
+        }
+      } catch (error) {
+        console.error("Weather fetch error:", error);
+        tempEl.textContent = "--°C";
+        descEl.textContent = "Weather unavailable";
+        iconEl.innerHTML = "☁️";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Fetch fresh user data
+      let user;
+      try {
+        const meRes = await fetch(`http://localhost:5000/api/auth/me?_t=${Date.now()}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Cache-Control': 'no-cache, no-store',
+            'Pragma': 'no-cache'
+          },
+          cache: 'no-store'
+        });
+        if (meRes.ok) {
+          user = await meRes.json();
+          localStorage.setItem('user', JSON.stringify(user));
+        } else {
+          user = JSON.parse(localStorage.getItem('user'));
+        }
+      } catch (e) {
+        user = JSON.parse(localStorage.getItem('user'));
+      }
+
+      if (user) {
+        document.getElementById('user-name').textContent = user.name || 'User';
+        document.getElementById('welcome-name').textContent = (user.name || 'Gardener').split(' ')[0];
+        document.getElementById('user-location').textContent = user.location || 'Location not set';
+
+        // Load weather
+        if (user.location) fetchWeather(user.location);
+        else document.getElementById('weather-desc').textContent = "Set location to see weather";
+
+        const profileImg = document.getElementById('profile-img');
+        const pic = user.profilePicture;
+        if (pic && pic.includes('ik.imagekit.io')) {
+          const sep = pic.includes('?') ? '&' : '?';
+          profileImg.src = pic + sep + '_cb=' + Date.now();
+        } else {
+          const initial = (user.name || 'U').charAt(0).toUpperCase();
+          profileImg.src = `https://ui-avatars.com/api/?name=${initial}&background=10b981&color=fff&size=150&bold=true&length=1`;
+        }
+
+        // Populate modal
+        document.getElementById('epName').value = user.name || '';
+        document.getElementById('epLocation').value = user.location || '';
+        document.getElementById('epPhone').value = user.phone || '';
+
+        if (user.role === 'admin') {
+          document.querySelectorAll('.user-only').forEach(el => el.classList.add('hidden'));
+          document.getElementById('admin-dashboard-section').classList.remove('hidden');
+          initAdminDashboard();
+        }
+
+        // Fetch My Gardens
+        try {
+          const res = await fetch('http://localhost:5000/api/gardens');
+          const gardens = await res.json();
+          const currentUserId = user?._id || user?.id;
+          const myGardens = gardens.filter(g => {
+            const ownerId = g.owner?._id || g.owner;
+            return ownerId === currentUserId;
+          });
+
+          const list = document.getElementById('my-gardens-list');
+          if (myGardens.length > 0) {
+            list.innerHTML = myGardens.map(garden => {
+              const images = (garden.images && garden.images.length > 0) ? garden.images : ['https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'];
+              return `
+              <div class="bg-white/70 rounded-2xl border border-white/80 overflow-hidden hover:border-emerald-300 shadow-sm hover:shadow-md transition-all group">
+                <div class="h-32 overflow-hidden relative">
+                  <div class="slides-container" id="slides-${garden._id}" style="display: flex; transition: transform 0.5s ease; width: 100%; height: 100%;">
+                    ${images.map(img => `<img src="${img}" class="min-w-full h-full object-cover">`).join('')}
+                  </div>
+                  
+                  ${images.length > 1 ? `
+                    <button onclick="event.preventDefault(); moveGardenSlide('${garden._id}', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white w-6 h-6 rounded-full flex items-center justify-center backdrop-blur-sm z-30 transition-all opacity-0 group-hover:opacity-100"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                    <button onclick="event.preventDefault(); moveGardenSlide('${garden._id}', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white w-6 h-6 rounded-full flex items-center justify-center backdrop-blur-sm z-30 transition-all opacity-0 group-hover:opacity-100"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                  ` : ''}
+
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+                </div>
+                <div class="p-5">
+                  <h4 class="font-bold text-lg text-emerald-700 mb-1 truncate">${garden.name}</h4>
+                  <p class="text-sm text-slate-500 font-medium truncate mb-4 flex items-center gap-1"><span><i class="fa-solid fa-location-dot"></i></span> ${garden.address || 'Location Hidden'}</p>
+                  <div class="flex gap-2">
+                    <a href="garden-detail.html?id=${garden._id}" class="flex-grow text-center text-sm bg-emerald-100 text-emerald-700 hover:bg-emerald-500 hover:text-white border border-emerald-200 py-2 rounded-xl transition-colors font-bold">View</a>
+                    <button onclick="openEditGardenModal('${garden._id}')" class="text-sm bg-white hover:bg-slate-50 text-slate-600 hover:text-emerald-600 border border-slate-200 px-3 py-2 rounded-xl transition-colors" title="Edit Garden"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteGarden('${garden._id}')" class="text-sm bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-200 px-3 py-2 rounded-xl transition-colors" title="Delete Garden"><i class="fa-solid fa-trash-can"></i></button>
+                  </div>
+                </div>
+              </div>
+            `}).join('');
+          } else {
+            list.innerHTML = `
+              <div class="col-span-full bg-white/50 border border-dashed border-emerald-300 rounded-2xl p-8 text-center">
+                <div class="text-4xl mb-3 drop-shadow-sm"><i class="fa-solid fa-seedling"></i></div>
+                <p class="text-slate-700 font-bold mb-1">Your garden space is empty</p>
+                <p class="text-sm text-slate-500 font-medium mb-4">Start by adding your first community garden.</p>
+                <a href="add-garden.html" class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors shadow-md shadow-emerald-500/20">Add Garden</a>
+              </div>
+            `;
+          }
+        } catch (e) { console.error(e) }
+
+        const gardenSlideIndexes = {};
+        window.moveGardenSlide = (id, dir) => {
+          if (!gardenSlideIndexes[id]) gardenSlideIndexes[id] = 0;
+          const container = document.getElementById(`slides-${id}`);
+          const count = container.children.length;
+          gardenSlideIndexes[id] = (gardenSlideIndexes[id] + dir + count) % count;
+          container.style.transform = `translateX(-${gardenSlideIndexes[id] * 100}%)`;
+        };
+
+        // Add Modal JS Logic
+        window.openEditGardenModal = async (id) => {
+          try {
+            const res = await fetch(`http://localhost:5000/api/gardens/${id}`);
+            const garden = await res.json();
+            if (!res.ok) throw new Error(garden.message);
+
+            document.getElementById('editGardenId').value = garden._id;
+            document.getElementById('editGardenName').value = garden.name;
+            document.getElementById('editGardenDesc').value = garden.description;
+            document.getElementById('editGardenType').value = garden.type;
+            document.getElementById('editGardenFee').value = garden.entryFee;
+            document.getElementById('editGardenAddress').value = garden.address || '';
+            document.getElementById('editGardenOpening').value = garden.openingTime || '';
+            document.getElementById('editGardenClosing').value = garden.closingTime || '';
+            
+            document.getElementById('editGardenModal').classList.remove('hidden');
+          } catch (err) { showToast(err.message, 'error'); }
+        };
+
+        document.getElementById('editGardenForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const id = document.getElementById('editGardenId').value;
+          const formData = new FormData();
+          formData.append('name', document.getElementById('editGardenName').value);
+          formData.append('description', document.getElementById('editGardenDesc').value);
+          formData.append('type', document.getElementById('editGardenType').value);
+          formData.append('entryFee', document.getElementById('editGardenFee').value);
+          formData.append('address', document.getElementById('editGardenAddress').value);
+          formData.append('openingTime', document.getElementById('editGardenOpening').value);
+          formData.append('closingTime', document.getElementById('editGardenClosing').value);
+          
+          const files = document.getElementById('editGardenImages').files;
+          for (let i = 0; i < files.length; i++) formData.append('images', files[i]);
+
+          try {
+            const res = await fetch(`http://localhost:5000/api/gardens/${id}`, {
+              method: 'PUT',
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+              body: formData
+            });
+            if (res.ok) {
+              showToast('Garden updated successfully!', 'success');
+              document.getElementById('editGardenModal').classList.add('hidden');
+              location.reload(); // Refresh to show changes
+            }
+          } catch (err) { showToast(err.message, 'error'); }
+        });
+
+        window.deleteGarden = async (id) => {
+          showConfirm('Delete this garden?', async () => {
+            try {
+              const res = await fetch(`http://localhost:5000/api/gardens/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+              if (res.ok) {
+                showToast('Deleted', 'success');
+                location.reload();
+              }
+            } catch (err) { showToast(err.message, 'error'); }
+          });
+        };
+
+        // Fetch Requests
+        try {
+          const res = await fetch('http://localhost:5000/api/requests', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const allRequests = await res.json();
+
+          // Only show incoming requests for these tabs (where you are the owner/seller)
+          const currentUserId = user?._id || user?.id;
+          const pendingReqs = allRequests.filter(r => {
+            const ownerId = r.ownerId?._id || r.ownerId;
+            return ownerId === currentUserId && r.status === 'Pending';
+          });
+          const acceptedReqs = allRequests.filter(r => {
+            const ownerId = r.ownerId?._id || r.ownerId;
+            const requesterId = r.requester?._id || r.requester;
+            // Show accepted requests if you are the owner OR the requester
+            return (ownerId === currentUserId || requesterId === currentUserId) && r.status === 'Approved';
+          });
+
+          const pContainer = document.getElementById('pendingRequestsContainer');
+          const aContainer = document.getElementById('acceptedRequestsContainer');
+          const pCount = document.getElementById('pending-count');
+
+          if (pendingReqs.length > 0) {
+            pCount.textContent = pendingReqs.length;
+            pCount.classList.remove('hidden');
+
+            pContainer.innerHTML = pendingReqs.map(req => `
+              <div class="bg-white/80 border-l-4 border-l-amber-400 rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all hover:bg-white shadow-sm border border-slate-100">
+                <div class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 text-xl shrink-0">🤝</div>
+                  <div>
+                    <p class="text-[15px] font-bold text-slate-800 mb-0.5">${req.requester?.name || 'User'} <span class="font-medium text-slate-500">requested:</span> <span class="text-emerald-600">${req.type}</span></p>
+                    <p class="text-sm text-slate-500 font-medium flex items-center gap-1"><span>🎯</span> Target: ${req.targetId?.name || 'Unknown'}</p>
+                  </div>
+                </div>
+                <div class="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                  <button onclick="updateRequest('${req._id}', 'Approved')" class="flex-1 sm:flex-none text-sm bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-lg font-bold transition-colors shadow-md shadow-emerald-500/20">Accept</button>
+                  <button onclick="updateRequest('${req._id}', 'Rejected')" class="flex-1 sm:flex-none text-sm bg-slate-100 hover:bg-rose-500 text-slate-600 hover:text-white border border-slate-200 px-5 py-2 rounded-lg font-bold transition-colors">Reject</button>
+                </div>
+              </div>
+            `).join('');
+          } else {
+            pContainer.innerHTML = '<div class="bg-white/50 rounded-xl p-6 text-center border border-dashed border-emerald-200"><p class="text-slate-500 font-medium">No pending requests at the moment. You\'re all caught up! <i class="fa-solid fa-wand-magic-sparkles"></i></p></div>';
+          }
+
+          if (acceptedReqs.length > 0) {
+            aContainer.innerHTML = acceptedReqs.map(req => `
+              <div class="bg-white/60 border-l-4 border-l-emerald-400 rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border border-slate-100">
+                <div class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl shrink-0"><i class="fa-solid fa-check"></i></div>
+                  <div>
+                    <p class="text-[15px] font-bold text-slate-800 mb-0.5">${req.requester?.name || 'User'}</p>
+                    <p class="text-sm text-slate-500 font-medium flex items-center gap-1"><span>Joined:</span> ${req.targetId?.name || 'Unknown'}</p>
+                  </div>
+                </div>
+                <div class="w-full sm:w-auto text-right">
+                  <span class="inline-block px-4 py-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">Approved</span>
+                </div>
+              </div>
+            `).join('');
+          } else {
+            aContainer.innerHTML = '<div class="bg-white/50 rounded-xl p-6 text-center border border-dashed border-emerald-200"><p class="text-slate-500 font-medium">No accepted requests yet.</p></div>';
+          }
+
+        } catch (e) { console.error(e) }
+      }
+    });
+
+    async function updateRequest(id, status) {
+      const token = localStorage.getItem('token');
+      try {
+        const res = await fetch(`http://localhost:5000/api/requests/${id}/status`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+        if (res.ok) {
+          showToast(status === 'Approved' ? 'Request approved!' : 'Request rejected.', status === 'Approved' ? 'success' : 'warn');
+          setTimeout(() => window.location.reload(), 1500);
+        } else {
+          const d = await res.json();
+          showToast(d.message || 'Failed to update request', 'error');
+        }
+      } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    async function deleteGarden(gardenId) {
+      showConfirm(
+        'This will permanently remove the garden and all its data.',
+        async () => {
+          const token = localStorage.getItem('token');
+          try {
+            const res = await fetch(`http://localhost:5000/api/gardens/${gardenId}`, {
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+              showToast('Garden deleted successfully!', 'success');
+              setTimeout(() => window.location.reload(), 1500);
+            }
+          } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        },
+        { title: 'Delete Garden?', icon: '<i class="fa-solid fa-seedling"></i>', confirmText: 'Yes, Delete' }
+      );
+    }
+
+    // Edit Profile Logic
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        const btn = document.getElementById('epSubmitBtn');
+        const statusEl = document.getElementById('epStatusMsg');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        statusEl.className = 'p-3 rounded-xl text-sm text-center bg-blue-50 text-blue-600 border border-blue-200 font-bold';
+        statusEl.classList.remove('hidden');
+
+        const picFile = document.getElementById('epPic').files[0];
+        let newPicUrl = null;
+
+        if (picFile) {
+          btn.textContent = 'Uploading photo...';
+          statusEl.textContent = '📸 Uploading to cloud...';
+          try {
+            const avatarForm = new FormData();
+            avatarForm.append('profilePicture', picFile);
+            const avatarRes = await fetch('http://localhost:5000/api/auth/upload-avatar', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${token}` },
+              body: avatarForm
+            });
+            const avatarData = await avatarRes.json();
+            if (!avatarRes.ok) throw new Error(avatarData.message || 'Upload failed');
+            newPicUrl = avatarData.profilePicture;
+            statusEl.textContent = '<i class="fa-solid fa-check"></i> Photo uploaded! Saving...';
+          } catch (err) {
+            statusEl.className = 'p-3 rounded-xl text-sm text-center bg-red-50 text-red-600 border border-red-200 font-bold';
+            statusEl.textContent = '<i class="fa-solid fa-xmark"></i> Upload failed: ' + err.message;
+            btn.textContent = originalText;
+            btn.disabled = false;
+            return;
+          }
+        }
+
+        btn.textContent = 'Saving details...';
+        try {
+          const profileData = {
+            name: document.getElementById('epName').value,
+            location: document.getElementById('epLocation').value,
+            phone: document.getElementById('epPhone').value
+          };
+          const pwd = document.getElementById('epPassword').value;
+          if (pwd) profileData.password = pwd;
+
+          const res = await fetch('http://localhost:5000/api/auth/me', {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(profileData)
+          });
+          const data = await res.json();
+          if (res.ok) {
+            const finalPic = newPicUrl || data.profilePicture;
+            const finalData = { ...data, profilePicture: finalPic || data.profilePicture };
+            localStorage.setItem('user', JSON.stringify(finalData));
+
+            statusEl.className = 'p-3 rounded-xl text-sm text-center bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold';
+            statusEl.textContent = '<i class="fa-solid fa-wand-magic-sparkles"></i> Profile updated!';
+            setTimeout(() => {
+              document.getElementById('editProfileModal').classList.add('hidden');
+              showToast('Profile updated successfully! <i class="fa-solid fa-leaf text-emerald-500"></i>', 'success');
+              window.location.href = window.location.href.split('?')[0] + '?_t=' + Date.now();
+            }, 800);
+          } else { throw new Error(data.message || 'Update failed'); }
+        } catch (e) {
+          statusEl.className = 'p-3 rounded-xl text-sm text-center bg-red-50 text-red-600 border border-red-200 font-bold';
+          statusEl.textContent = '<i class="fa-solid fa-xmark"></i> Error: ' + e.message;
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+    });
+
+    function previewProfilePic(input) {
+      const preview = document.getElementById('epPicPreview');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { preview.src = e.target.result; preview.classList.remove('hidden'); };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+  </script>
+  <script src="js/admin.js"></script>
+</body>
+
+</html>

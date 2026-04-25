@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community Feed | UrbanRoots</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-image: url('images/dashboard-bg.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-color: #f0fdf4;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .animate-in {
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .tab-btn { padding: 9px 24px; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; transition: all 0.2s; border: 2px solid transparent; cursor: pointer; }
+    .tab-btn.active { background: #10b981; color: #fff; box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
+    .tab-btn:not(.active) { background: rgba(255,255,255,0.75); color: #065f46; border-color: rgba(16,185,129,0.2); }
+    .heart-active { animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; color: #f43f5e !important; }
+    @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.5); color: #f43f5e; } 100% { transform: scale(1); color: #f43f5e; } }
+    .comments-section { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease; opacity: 0; }
+    .comments-section.open { max-height: 1000px; opacity: 1; }
+
+    /* Slideshow Styles */
+    .slideshow-container { position: relative; width: 100%; overflow: hidden; border-radius: 12px; margin-top: 15px; background: #000; }
+    .slides-wrapper { display: flex; transition: transform 0.5s ease-in-out; }
+    .slide-item { min-width: 100%; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
+    .slide-media { max-width: 100%; max-height: 600px; object-fit: contain; }
+    .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; padding: 12px; cursor: pointer; border-radius: 50%; transition: background 0.3s; z-index: 10; backdrop-filter: blur(4px); }
+    .slide-btn:hover { background: rgba(0,0,0,0.6); }
+    .slide-prev { left: 10px; }
+    .slide-next { right: 10px; }
+    .slide-dots { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); transition: all 0.3s; }
+    .dot.active { background: white; transform: scale(1.2); }
+
+    /* Media Preview in Form */
+    #mediaPreviewContainer { display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px; }
+    .media-preview-item { position: relative; width: 80px; height: 80px; flex-shrink: 0; border-radius: 8px; overflow: hidden; border: 2px solid #10b981; }
+    .media-preview-item img, .media-preview-item video { width: 100%; height: 100%; object-fit: cover; }
+    .remove-media-btn { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <nav class="glass sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <a href="index.html" class="flex items-center gap-3 text-emerald-800 text-xl font-bold" style="font-family: 'Poppins', sans-serif;">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 border-emerald-500 bg-white/50 backdrop-blur-md"><i class="fa-solid fa-leaf text-emerald-500"></i></div>
+          UrbanRoots
+        </a>
+        <div class="flex items-center space-x-6">
+          <a href="gardens.html" class="text-sm font-bold uppercase text-slate-600 hover:text-emerald-600 transition-colors">Gardens</a>
+          <a href="knowledge.html" class="text-sm font-bold uppercase text-slate-600 hover:text-emerald-600 transition-colors">Knowledge</a>
+          <a href="marketplace.html" class="text-sm font-bold uppercase text-slate-600 hover:text-emerald-600 transition-colors">Marketplace</a>
+          <a href="dashboard.html" class="text-sm font-bold uppercase text-slate-600 hover:text-emerald-600 transition-colors">Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-grow max-w-2xl mx-auto w-full px-4 py-10">
+    <div class="mb-8 animate-in text-center">
+      <h1 class="text-4xl font-bold text-emerald-800" style="font-family: 'Poppins', sans-serif;">Community Feed</h1>
+      <p class="text-slate-600 font-medium mt-2">Share your journey with photos and videos.</p>
+      <div class="flex justify-center gap-3 mt-6">
+        <button id="tabAll" class="tab-btn active" onclick="switchTab('all')">All Posts</button>
+        <button id="tabMy" class="tab-btn" onclick="switchTab('my')">My Posts</button>
+      </div>
+    </div>
+
+    <div id="statusMsg" class="hidden mb-4 p-3 rounded-xl text-sm text-center font-bold"></div>
+
+    <form id="postForm" class="glass-card p-6 mb-10 animate-in delay-1 border-emerald-100/50">
+      <div class="flex gap-4">
+        <img id="my-profile-img" src="https://ui-avatars.com/api/?name=U&background=10b981&color=fff" class="w-12 h-12 rounded-full border-2 border-emerald-200 shrink-0 object-cover">
+        <div class="flex-grow">
+          <textarea id="postContent" required class="w-full bg-white/50 border border-emerald-100 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:bg-white transition-all" rows="3" placeholder="What's on your mind?"></textarea>
+          
+          <div id="mediaPreviewContainer"></div>
+
+          <div class="mt-3 flex justify-between items-center gap-3">
+            <div class="flex items-center gap-2">
+              <label for="postMedia" class="cursor-pointer text-emerald-600 hover:text-emerald-800 text-sm font-bold flex items-center gap-2 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+                <i class="fa-solid fa-photo-film"></i> Add Media (Up to 5)
+              </label>
+              <input type="file" id="postMedia" accept="image/*,video/*" multiple class="hidden">
+            </div>
+            <button type="submit" id="postBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/20 uppercase">Post</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div id="feedContainer" class="space-y-8 pb-20"></div>
+  </main>
+
+  <footer class="bg-emerald-900/90 backdrop-blur-sm py-5 border-t border-emerald-700/50 w-full"
+    style="margin-left: -90px; width: calc(100% + 90px); padding-left: 90px;">
+    <div class="text-center">
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-2">
+        <i class="fa-solid fa-leaf text-emerald-300 text-lg"></i>
+        <p class="text-white font-bold">UrbanRoots Platform</p>
+      </div>
+      <p class="text-emerald-100 text-sm">
+        🌱 Cultivating greener cities, one block at a time.
+      </p>
+      <div class="mt-3 pt-2 border-t border-emerald-700/50">
+        <p class="text-emerald-200/70 text-xs">© 2026 UrbanRoots — All rights reserved</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Edit Post Modal -->
+  <div id="editModalBackdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex justify-center items-center p-4 hidden">
+    <div class="bg-white/95 backdrop-blur-xl w-full max-w-lg rounded-3xl shadow-2xl p-8 relative animate-in">
+      <button onclick="closeEditModal()" class="absolute top-5 right-5 text-slate-400 hover:text-rose-500 text-3xl transition-colors">&times;</button>
+      <h3 class="text-2xl font-bold text-emerald-800 mb-6" style="font-family:'Poppins',sans-serif;">Edit Post</h3>
+      
+      <textarea id="editContent" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-all resize-none mb-4"></textarea>
+      
+      <p class="text-sm font-bold text-slate-700 mb-2">Manage Media</p>
+      <div id="editMediaContainer" class="grid grid-cols-3 gap-2 mb-4"></div>
+      
+      <!-- New Media Preview -->
+      <div id="editNewMediaPreview" class="flex gap-2 overflow-x-auto mb-4 custom-scrollbar"></div>
+      
+      <div class="mb-6">
+        <label for="editAddMedia" class="cursor-pointer text-emerald-600 hover:text-emerald-800 text-xs font-bold flex items-center gap-2 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200 w-max">
+          <i class="fa-solid fa-plus"></i> Add More Media
+        </label>
+        <input type="file" id="editAddMedia" accept="image/*,video/*" multiple class="hidden">
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button onclick="closeEditModal()" class="px-6 py-2 rounded-full font-bold text-slate-500 hover:bg-slate-100 transition-all">Cancel</button>
+        <button onclick="submitEdit()" class="bg-emerald-500 text-white px-8 py-2 rounded-full font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let currentTab = 'all';
+    let editingPostId = null;
+    let postsData = [];
+    let deleteMediaIndices = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        currentUser = JSON.parse(userStr);
+        document.getElementById('my-profile-img').src = getAvatarUrl(currentUser);
+      }
+      fetchPosts();
+    });
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabAll').classList.toggle('active', tab === 'all');
+      document.getElementById('tabMy').classList.toggle('active', tab === 'my');
+      document.getElementById('postForm').style.display = tab === 'all' ? '' : 'none';
+      fetchPosts();
+    }
+
+    // Media Preview Handling
+    document.getElementById('postMedia').addEventListener('change', function() {
+      const container = document.getElementById('mediaPreviewContainer');
+      container.innerHTML = '';
+      const files = Array.from(this.files).slice(0, 5);
+      files.forEach((file, index) => {
+        const url = URL.createObjectURL(file);
+        const isVideo = file.type.startsWith('video/');
+        container.innerHTML += `
+          <div class="media-preview-item">
+            ${isVideo ? `<video src="${url}"></video>` : `<img src="${url}">`}
+            <div class="remove-media-btn" onclick="removeFileFromInput(${index})">&times;</div>
+          </div>
+        `;
+      });
+    });
+
+    function removeFileFromInput(idx) {
+      const input = document.getElementById('postMedia');
+      const dt = new DataTransfer();
+      const files = input.files;
+      for (let i = 0; i < files.length; i++) {
+        if (i !== idx) dt.items.add(files[i]);
+      }
+      input.files = dt.files;
+      input.dispatchEvent(new Event('change'));
+    }
+
+    document.getElementById('postForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = localStorage.getItem('token');
+      if (!token) { showToast('Please login to post!', 'warn'); return; }
+
+      const formData = new FormData();
+      formData.append('content', document.getElementById('postContent').value);
+      const files = document.getElementById('postMedia').files;
+      for (let i = 0; i < Math.min(files.length, 5); i++) formData.append('media', files[i]);
+
+      try {
+        const btn = document.getElementById('postBtn');
+        btn.disabled = true; btn.textContent = 'Posting...';
+        const res = await fetch('http://localhost:5000/api/posts', {
+          method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
+        });
+        if (res.ok) {
+          showToast('Post shared!', 'success');
+          e.target.reset();
+          document.getElementById('mediaPreviewContainer').innerHTML = '';
+          fetchPosts();
+        }
+        btn.disabled = false; btn.textContent = 'Post';
+      } catch (err) { showToast(err.message, 'error'); }
+    });
+
+    async function fetchPosts() {
+      const isMyPosts = currentTab === 'my';
+      const token = localStorage.getItem('token');
+      const url = isMyPosts ? 'http://localhost:5000/api/posts/my' : 'http://localhost:5000/api/posts';
+      const headers = isMyPosts ? { 'Authorization': `Bearer ${token}` } : {};
+
+      try {
+        const res = await fetch(url, { headers });
+        postsData = await res.json();
+        const container = document.getElementById('feedContainer');
+        container.innerHTML = '';
+
+        if (postsData.length === 0) {
+          container.innerHTML = `<div class="text-center py-16 glass-card rounded-2xl"><p class="text-slate-700 font-bold">No posts found.</p></div>`;
+          return;
+        }
+
+        postsData.forEach((post, index) => {
+          const myId = currentUser?._id || currentUser?.id;
+          const isOwner = myId && (post.creator?._id === myId || post.creator === myId);
+          const date = new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          
+          container.innerHTML += `
+            <div class="glass-card p-6 overflow-hidden animate-in" id="post-${post._id}">
+              <div class="flex items-center gap-3 mb-4">
+                <img src="${getAvatarUrl(post.creator)}" class="w-12 h-12 rounded-full border-2 border-emerald-100 object-cover">
+                <div class="flex-grow">
+                  <h4 class="font-bold text-emerald-900">${post.creator?.name || 'Anonymous'}</h4>
+                  <p class="text-xs text-slate-500 font-medium">${date}</p>
+                </div>
+                ${isOwner ? `
+                  <div class="flex gap-2">
+                    <button onclick="openEditModal('${post._id}')" class="text-slate-400 hover:text-emerald-500 transition-colors"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deletePost('${post._id}')" class="text-slate-400 hover:text-rose-500 transition-colors"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                ` : ''}
+              </div>
+              <p class="text-slate-700 font-medium whitespace-pre-wrap">${post.content}</p>
+              
+              ${renderMediaSlideshow(post)}
+
+              <div class="flex gap-6 mt-5 pt-4 border-t border-slate-100">
+                <button onclick="likePost('${post._id}', this)" class="flex items-center gap-2 text-slate-500 hover:text-rose-500 font-bold text-sm">
+                  <i class="${post.likes.includes(myId) ? 'fa-solid fa-heart text-rose-500' : 'fa-regular fa-heart'}"></i>
+                  <span>${post.likes.length}</span>
+                </button>
+                <button onclick="toggleComments('${post._id}')" class="flex items-center gap-2 text-slate-500 hover:text-emerald-500 font-bold text-sm">
+                  <i class="fa-regular fa-comment"></i>
+                  <span>${post.comments.length}</span>
+                </button>
+              </div>
+
+              <div id="comments-${post._id}" class="comments-section">
+                <div class="pt-4 mt-4 space-y-4">
+                  <div class="space-y-3">
+                    ${post.comments.map(c => `
+                      <div class="bg-slate-50 p-3 rounded-2xl text-sm">
+                        <span class="font-bold text-emerald-700">${c.user?.name || 'Anonymous'}</span>
+                        <p class="text-slate-600">${c.text}</p>
+                      </div>
+                    `).join('')}
+                  </div>
+                  <form onsubmit="postComment(event, '${post._id}')" class="flex gap-2">
+                    <input type="text" id="commentInput-${post._id}" required placeholder="Comment..." class="flex-grow bg-white border border-emerald-100 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                    <button type="submit" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold">Send</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      } catch (e) { console.error(e); }
+    }
+
+    function renderMediaSlideshow(post) {
+      if (!post.media || post.media.length === 0) return '';
+      const slides = post.media.map(url => {
+        const isVideo = url.match(/\.(mp4|webm|ogg|mov)$/i);
+        return `
+          <div class="slide-item">
+            ${isVideo ? `<video src="${url}" class="slide-media" controls></video>` : `<img src="${url}" class="slide-media" onclick="window.open('${url}')">`}
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="slideshow-container" id="slideshow-${post._id}">
+          <div class="slides-wrapper" id="wrapper-${post._id}" style="transform: translateX(0%)">
+            ${slides}
+          </div>
+          ${post.media.length > 1 ? `
+            <button class="slide-btn slide-prev" onclick="moveSlide('${post._id}', -1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="slide-btn slide-next" onclick="moveSlide('${post._id}', 1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="slide-dots">
+              ${post.media.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" id="dot-${post._id}-${i}"></div>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    const currentSlides = {};
+    window.moveSlide = (postId, dir) => {
+      if (currentSlides[postId] === undefined) currentSlides[postId] = 0;
+      const post = postsData.find(p => p._id === postId);
+      const count = post.media.length;
+      currentSlides[postId] = (currentSlides[postId] + dir + count) % count;
+      const wrapper = document.getElementById(`wrapper-${postId}`);
+      wrapper.style.transform = `translateX(-${currentSlides[postId] * 100}%)`;
+      
+      const dots = document.querySelectorAll(`#slideshow-${postId} .dot`);
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlides[postId]));
+    };
+
+    function toggleComments(postId) { document.getElementById(`comments-${postId}`).classList.toggle('open'); }
+
+    async function postComment(e, postId) {
+      e.preventDefault();
+      const token = localStorage.getItem('token');
+      if (!token) { showToast('Login to comment', 'warn'); return; }
+      const input = document.getElementById(`commentInput-${postId}`);
+      try {
+        const res = await fetch(`http://localhost:5000/api/posts/${postId}/comment`, {
+          method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: input.value })
+        });
+        if (res.ok) { showToast('Commented', 'success'); fetchPosts(); }
+      } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    async function likePost(postId, btn) {
+      const token = localStorage.getItem('token');
+      if (!token) { showToast('Login to like', 'warn'); return; }
+      try {
+        const res = await fetch(`http://localhost:5000/api/posts/${postId}/like`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+        if (res.ok) fetchPosts();
+      } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    function openEditModal(postId) {
+      editingPostId = postId;
+      deleteMediaIndices = [];
+      const post = postsData.find(p => p._id === postId);
+      document.getElementById('editContent').value = post.content;
+      
+      const mediaContainer = document.getElementById('editMediaContainer');
+      mediaContainer.innerHTML = '';
+      post.media.forEach((url, i) => {
+        const isVideo = url.match(/\.(mp4|webm|ogg|mov)$/i);
+        mediaContainer.innerHTML += `
+          <div class="relative w-full h-24 rounded-lg overflow-hidden border-2 border-slate-100" id="edit-media-${i}">
+            ${isVideo ? `<video src="${url}" class="w-full h-full object-cover"></video>` : `<img src="${url}" class="w-full h-full object-cover">`}
+            <div class="absolute top-1 right-1 bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs cursor-pointer shadow-lg" onclick="markMediaForDelete(${i})">&times;</div>
+          </div>
+        `;
+      });
+
+      document.getElementById('editModalBackdrop').classList.remove('hidden');
+    }
+
+    function markMediaForDelete(idx) {
+      if (!deleteMediaIndices.includes(idx)) {
+        deleteMediaIndices.push(idx);
+        document.getElementById(`edit-media-${idx}`).style.opacity = '0.3';
+        document.getElementById(`edit-media-${idx}`).style.filter = 'grayscale(1)';
+      } else {
+        deleteMediaIndices = deleteMediaIndices.filter(i => i !== idx);
+        document.getElementById(`edit-media-${idx}`).style.opacity = '1';
+        document.getElementById(`edit-media-${idx}`).style.filter = 'none';
+      }
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModalBackdrop').classList.add('hidden');
+      document.getElementById('editNewMediaPreview').innerHTML = '';
+      document.getElementById('editAddMedia').value = '';
+      editingPostId = null;
+    }
+
+    async function submitEdit() {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('content', document.getElementById('editContent').value);
+      formData.append('deleteIndices', JSON.stringify(deleteMediaIndices));
+      
+      const newFiles = document.getElementById('editAddMedia').files;
+      for (let i = 0; i < newFiles.length; i++) formData.append('media', newFiles[i]);
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/posts/${editingPostId}`, {
+          method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }, body: formData
+        });
+        if (res.ok) {
+          showToast('Post updated!', 'success');
+          closeEditModal();
+          fetchPosts();
+        }
+      } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    async function deletePost(postId) {
+      if (!confirm('Delete this post?')) return;
+      try {
+        const res = await fetch(`http://localhost:5000/api/posts/${postId}`, {
+          method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        if (res.ok) { showToast('Deleted', 'success'); fetchPosts(); }
+      } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    function getAvatarUrl(user) {
+      if (user?.profilePicture) return user.profilePicture;
+      return `https://ui-avatars.com/api/?name=${user?.name || 'U'}&background=10b981&color=fff`;
+    }
+
+    // Edit Modal New Media Preview
+    document.getElementById('editAddMedia').addEventListener('change', function() {
+      const container = document.getElementById('editNewMediaPreview');
+      container.innerHTML = '';
+      const files = Array.from(this.files);
+      files.forEach((file, index) => {
+        const url = URL.createObjectURL(file);
+        const isVideo = file.type.startsWith('video/');
+        container.innerHTML += `
+          <div class="media-preview-item">
+            ${isVideo ? `<video src="${url}"></video>` : `<img src="${url}">`}
+            <div class="remove-media-btn" onclick="removeFileFromEditInput(${index})">&times;</div>
+          </div>
+        `;
+      });
+    });
+
+    function removeFileFromEditInput(idx) {
+      const input = document.getElementById('editAddMedia');
+      const dt = new DataTransfer();
+      const files = input.files;
+      for (let i = 0; i < files.length; i++) {
+        if (i !== idx) dt.items.add(files[i]);
+      }
+      input.files = dt.files;
+      input.dispatchEvent(new Event('change'));
+    }
+  </script>
+  <script src="js/notifications.js"></script>
+  <script src="js/navbar.js"></script>
+</body>
+</html>
