@@ -10,34 +10,44 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/urbanroots')
-.then(async () => {
-  console.log('MongoDB Connected...');
-  
-  // Seed Admin User
-  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
-    const User = require('./models/User');
-    const bcrypt = require('bcryptjs');
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, salt);
+// Serverless-friendly DB Connection Middleware
+let isConnected = false;
+
+app.use(async (req, res, next) => {
+  if (isConnected) {
+    return next();
+  }
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/urbanroots');
+    isConnected = db.connections[0].readyState;
+    console.log('MongoDB Connected...');
     
-    await User.findOneAndUpdate(
-      { email: process.env.ADMIN_EMAIL },
-      { 
-        $set: { 
-          name: 'Super Admin', 
-          password: hashedPassword, 
+    // Seed Admin User (only needs to run once)
+    if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+      const User = require('./models/User');
+      const adminExists = await User.findOne({ email: process.env.ADMIN_EMAIL });
+      if (!adminExists) {
+        const bcrypt = require('bcryptjs');
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, salt);
+        
+        await User.create({
+          name: 'Super Admin',
+          email: process.env.ADMIN_EMAIL,
+          password: hashedPassword,
           role: 'admin',
           location: 'Global Headquarters'
-        } 
-      },
-      { upsert: true, new: true }
-    );
-    console.log('Admin user ensured from .env credentials.');
+        });
+        console.log('Admin user ensured from .env credentials.');
+      }
+    }
+    next();
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    return res.status(500).json({ message: 'Database connection failed. Please check your connection string and ensure IP access is allowed in MongoDB Atlas.' });
   }
-})
-.catch(err => console.log(err));
+});
+
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
