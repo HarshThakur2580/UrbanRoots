@@ -150,38 +150,44 @@
       background: transparent;
     }
 
-    /* Weather Animations */
+    /* Enhanced Weather Animations */
     .weather-scene {
       position: relative;
-      width: 64px;
-      height: 64px;
+      width: 72px;
+      height: 72px;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      border-radius: 18px;
-      background: linear-gradient(to bottom, #7dd3fc, #bae6fd);
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+      border-radius: 20px;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 4px 10px rgba(14, 165, 233, 0.3);
+      transition: all 0.5s ease;
     }
     .weather-scene.night {
-      background: linear-gradient(to bottom, #1e293b, #334155);
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(49, 46, 129, 0.4);
+    }
+    .weather-scene.rainy {
+      background: linear-gradient(135deg, #475569, #1e293b);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(71, 85, 105, 0.4);
     }
     
     .sun {
       position: absolute;
-      width: 26px;
-      height: 26px;
-      background: #fbbf24;
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #fde047, #f59e0b);
       border-radius: 50%;
-      box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.5);
       animation: sunPulse 4s ease-in-out infinite;
       z-index: 2;
     }
     .sun-rays {
       position: absolute;
-      width: 44px;
-      height: 44px;
-      animation: rotateRays 20s linear infinite;
+      width: 50px;
+      height: 50px;
+      animation: rotateRays 15s linear infinite;
       z-index: 1;
     }
     .sun-rays span {
@@ -190,41 +196,77 @@
       left: 50%;
       transform: translate(-50%, -50%);
       width: 2px;
-      height: 44px;
-      background: rgba(251, 191, 36, 0.3);
+      height: 50px;
+      background: linear-gradient(to bottom, rgba(253, 224, 71, 0) 0%, rgba(253, 224, 71, 0.6) 20%, rgba(253, 224, 71, 0.6) 80%, rgba(253, 224, 71, 0) 100%);
     }
     .sun-rays span:nth-child(2) { transform: translate(-50%, -50%) rotate(45deg); }
     .sun-rays span:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg); }
     .sun-rays span:nth-child(4) { transform: translate(-50%, -50%) rotate(135deg); }
 
     .moon-crescent {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      box-shadow: 7px 7px 0 0 #f1f5f9;
+      box-shadow: 8px 8px 0 0 #e2e8f0;
       transform: rotate(-45deg) translate(-6px, -6px);
       z-index: 2;
-      filter: drop-shadow(0 0 8px rgba(241, 245, 249, 0.5));
+      filter: drop-shadow(0 0 10px rgba(226, 232, 240, 0.6));
+      animation: floatMoon 6s ease-in-out infinite;
+    }
+    
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out alternate;
     }
 
     .cloud {
       position: absolute;
-      color: rgba(255, 255, 255, 0.9);
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+      color: rgba(255, 255, 255, 0.95);
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
       z-index: 3;
       animation: floatCloud linear infinite;
     }
-    .cloud-1 { top: 8px; font-size: 24px; animation-duration: 12s; }
-    .cloud-2 { bottom: 8px; font-size: 18px; animation-duration: 18s; animation-delay: -5s; }
+    .cloud-1 { top: 12px; font-size: 28px; animation-duration: 15s; color: #f8fafc; text-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+    .cloud-2 { bottom: 6px; font-size: 22px; animation-duration: 22s; animation-delay: -7s; color: #f1f5f9; text-shadow: 0 2px 4px rgba(0,0,0,0.1); opacity: 0.8;}
+    
+    .rain-drop {
+      position: absolute;
+      width: 2px;
+      height: 10px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.8));
+      animation: rainFall 1s linear infinite;
+      z-index: 4;
+    }
 
     @keyframes sunPulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
-      50% { transform: scale(1.15); box-shadow: 0 0 30px rgba(251, 191, 36, 0.8); }
+      0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(245, 158, 11, 0.7); }
+      50% { transform: scale(1.1); box-shadow: 0 0 35px rgba(245, 158, 11, 0.9); }
+    }
+    @keyframes floatMoon {
+      0%, 100% { transform: rotate(-45deg) translate(-6px, -6px); }
+      50% { transform: rotate(-45deg) translate(-6px, -2px); }
     }
     @keyframes rotateRays { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes floatCloud {
-      from { transform: translateX(-70px); }
-      to { transform: translateX(70px); }
+      from { transform: translateX(-80px); }
+      to { transform: translateX(80px); }
+    }
+    @keyframes twinkle {
+      0% { opacity: 0.2; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 5px white; }
+    }
+    @keyframes rainFall {
+      0% { transform: translateY(-20px); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateY(40px); opacity: 0; }
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -678,9 +720,37 @@
 
           descEl.textContent = desc;
           
+          let isRainy = code >= 51 && code <= 67 || code >= 95;
+          let isSnowy = code >= 71 && code <= 82;
+          
+          let weatherClass = isNight ? 'night' : '';
+          if (isRainy || isSnowy) weatherClass += ' rainy';
+          
+          let starsHtml = isNight && !isRainy && !isSnowy ? `
+            <div class="stars">
+              <div class="star" style="top: 15%; left: 20%; width: 2px; height: 2px; animation-delay: 0s;"></div>
+              <div class="star" style="top: 30%; left: 80%; width: 3px; height: 3px; animation-delay: 0.5s;"></div>
+              <div class="star" style="top: 70%; left: 15%; width: 2px; height: 2px; animation-delay: 1s;"></div>
+              <div class="star" style="top: 80%; left: 70%; width: 2px; height: 2px; animation-delay: 1.5s;"></div>
+            </div>
+          ` : '';
+
+          let rainHtml = isRainy ? `
+            <div class="rain-drop" style="left: 30%; animation-delay: 0s;"></div>
+            <div class="rain-drop" style="left: 50%; animation-delay: 0.4s;"></div>
+            <div class="rain-drop" style="left: 70%; animation-delay: 0.8s;"></div>
+          ` : '';
+
+          let snowHtml = isSnowy ? `
+            <div class="rain-drop" style="left: 20%; animation-delay: 0s; height: 5px; width: 5px; border-radius: 50%; background: white;"></div>
+            <div class="rain-drop" style="left: 50%; animation-delay: 0.5s; height: 6px; width: 6px; border-radius: 50%; background: white;"></div>
+            <div class="rain-drop" style="left: 80%; animation-delay: 1s; height: 5px; width: 5px; border-radius: 50%; background: white;"></div>
+          ` : '';
+
           // Inject Animated Scene
           iconEl.innerHTML = `
-            <div class="weather-scene ${isNight ? 'night' : ''}">
+            <div class="weather-scene ${weatherClass}">
+              ${starsHtml}
               ${isNight ? `
                 <div class="moon-crescent"></div>
               ` : `
@@ -689,8 +759,12 @@
                   <span></span><span></span><span></span><span></span>
                 </div>
               `}
-              <i class="fa-solid fa-cloud cloud cloud-1"></i>
-              <i class="fa-solid fa-cloud cloud cloud-2"></i>
+              ${code !== 0 ? `
+                <i class="fa-solid fa-cloud cloud cloud-1"></i>
+                <i class="fa-solid fa-cloud cloud cloud-2"></i>
+              ` : ''}
+              ${rainHtml}
+              ${snowHtml}
             </div>
           `;
           iconEl.className = ""; // Remove previous text-4xl class if any
