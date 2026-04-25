@@ -157,30 +157,31 @@
 
     .moon-full {
       position: absolute;
-      top: 30px;
-      left: 40px;
-      width: 70px;
-      height: 70px;
+      top: 70px;
+      left: 50px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0);
       box-shadow: 0 0 50px rgba(255, 255, 255, 0.4), inset -5px -5px 15px rgba(0,0,0,0.1);
       z-index: 2;
+      animation: floatMoon 8s ease-in-out infinite;
     }
     .moon-crater { position: absolute; background: rgba(0,0,0,0.08); border-radius: 50%; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.15); }
-    .crater-1 { width: 14px; height: 14px; top: 18px; left: 18px; }
-    .crater-2 { width: 10px; height: 10px; top: 40px; left: 30px; }
-    .crater-3 { width: 18px; height: 14px; top: 30px; left: 45px; transform: rotate(45deg); }
+    .crater-1 { width: 16px; height: 16px; top: 20px; left: 20px; }
+    .crater-2 { width: 12px; height: 12px; top: 45px; left: 35px; }
+    .crater-3 { width: 20px; height: 16px; top: 35px; left: 50px; transform: rotate(45deg); }
 
     .sun-large {
       position: absolute;
-      top: 30px;
-      left: 40px;
-      width: 80px;
-      height: 80px;
+      top: 70px;
+      left: 50px;
+      width: 90px;
+      height: 90px;
       background: linear-gradient(135deg, #fef08a, #f59e0b);
       border-radius: 50%;
       box-shadow: 0 0 60px rgba(245, 158, 11, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.8);
-      animation: sunPulse 6s ease-in-out infinite;
+      animation: floatSun 6s ease-in-out infinite;
       z-index: 2;
     }
 
@@ -194,8 +195,8 @@
       z-index: 3;
       animation: floatCloud linear infinite;
     }
-    .cloud-layer-1 { top: 40px; font-size: 80px; animation-duration: 40s; color: rgba(255,255,255,0.4); }
-    .cloud-layer-2 { top: 90px; font-size: 120px; animation-duration: 60s; animation-delay: -15s; color: rgba(255,255,255,0.2); }
+    .cloud-layer-1 { top: 60px; font-size: 100px; animation-duration: 45s; color: rgba(255,255,255,0.4); left: -150px; }
+    .cloud-layer-2 { top: 110px; font-size: 150px; animation-duration: 65s; animation-delay: -15s; color: rgba(255,255,255,0.2); left: -200px; }
     
     .rain-drop-large {
       position: absolute;
@@ -206,13 +207,17 @@
       z-index: 4;
     }
 
-    @keyframes sunPulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 50px rgba(245, 158, 11, 0.5); }
-      50% { transform: scale(1.05); box-shadow: 0 0 70px rgba(245, 158, 11, 0.8); }
+    @keyframes floatSun {
+      0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 0 50px rgba(245, 158, 11, 0.5); }
+      50% { transform: translateY(-10px) scale(1.05); box-shadow: 0 0 70px rgba(245, 158, 11, 0.8); }
+    }
+    @keyframes floatMoon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
     }
     @keyframes floatCloud {
-      from { transform: translateX(-150px); }
-      to { transform: translateX(110vw); }
+      from { transform: translateX(0); }
+      to { transform: translateX(800px); }
     }
     @keyframes twinkle {
       0% { opacity: 0.1; transform: scale(0.5); }
