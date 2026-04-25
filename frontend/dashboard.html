@@ -150,123 +150,78 @@
       background: transparent;
     }
 
-    /* Enhanced Weather Animations */
-    .weather-scene {
-      position: relative;
-      width: 72px;
-      height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 4px 10px rgba(14, 165, 233, 0.3);
-      transition: all 0.5s ease;
-    }
-    .weather-scene.night {
-      background: linear-gradient(135deg, #1e1b4b, #312e81);
-      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(49, 46, 129, 0.4);
-    }
-    .weather-scene.rainy {
-      background: linear-gradient(135deg, #475569, #1e293b);
-      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(71, 85, 105, 0.4);
-    }
-    
-    .sun {
+    /* Enhanced Immersive Weather Animations */
+    .weather-bg-day { background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 100%); }
+    .weather-bg-night { background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%); }
+    .weather-bg-rain { background: linear-gradient(180deg, #334155 0%, #0f172a 100%); }
+
+    .moon-full {
       position: absolute;
-      width: 28px;
-      height: 28px;
-      background: linear-gradient(135deg, #fde047, #f59e0b);
+      top: 30px;
+      left: 40px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      box-shadow: 0 0 25px rgba(245, 158, 11, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.5);
-      animation: sunPulse 4s ease-in-out infinite;
+      background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0);
+      box-shadow: 0 0 50px rgba(255, 255, 255, 0.4), inset -5px -5px 15px rgba(0,0,0,0.1);
       z-index: 2;
     }
-    .sun-rays {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      animation: rotateRays 15s linear infinite;
-      z-index: 1;
-    }
-    .sun-rays span {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 2px;
-      height: 50px;
-      background: linear-gradient(to bottom, rgba(253, 224, 71, 0) 0%, rgba(253, 224, 71, 0.6) 20%, rgba(253, 224, 71, 0.6) 80%, rgba(253, 224, 71, 0) 100%);
-    }
-    .sun-rays span:nth-child(2) { transform: translate(-50%, -50%) rotate(45deg); }
-    .sun-rays span:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg); }
-    .sun-rays span:nth-child(4) { transform: translate(-50%, -50%) rotate(135deg); }
+    .moon-crater { position: absolute; background: rgba(0,0,0,0.08); border-radius: 50%; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.15); }
+    .crater-1 { width: 14px; height: 14px; top: 18px; left: 18px; }
+    .crater-2 { width: 10px; height: 10px; top: 40px; left: 30px; }
+    .crater-3 { width: 18px; height: 14px; top: 30px; left: 45px; transform: rotate(45deg); }
 
-    .moon-crescent {
-      width: 26px;
-      height: 26px;
+    .sun-large {
+      position: absolute;
+      top: 30px;
+      left: 40px;
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #fef08a, #f59e0b);
       border-radius: 50%;
-      box-shadow: 8px 8px 0 0 #e2e8f0;
-      transform: rotate(-45deg) translate(-6px, -6px);
+      box-shadow: 0 0 60px rgba(245, 158, 11, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.8);
+      animation: sunPulse 6s ease-in-out infinite;
       z-index: 2;
-      filter: drop-shadow(0 0 10px rgba(226, 232, 240, 0.6));
-      animation: floatMoon 6s ease-in-out infinite;
-    }
-    
-    .stars {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-    .star {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      animation: twinkle 2s infinite ease-in-out alternate;
     }
 
-    .cloud {
+    .stars { position: absolute; width: 100%; height: 100%; z-index: 1; }
+    .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 3s infinite ease-in-out alternate; }
+
+    .cloud-layer {
       position: absolute;
-      color: rgba(255, 255, 255, 0.95);
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+      color: rgba(255, 255, 255, 0.6);
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
       z-index: 3;
       animation: floatCloud linear infinite;
     }
-    .cloud-1 { top: 12px; font-size: 28px; animation-duration: 15s; color: #f8fafc; text-shadow: 0 2px 4px rgba(0,0,0,0.1);}
-    .cloud-2 { bottom: 6px; font-size: 22px; animation-duration: 22s; animation-delay: -7s; color: #f1f5f9; text-shadow: 0 2px 4px rgba(0,0,0,0.1); opacity: 0.8;}
+    .cloud-layer-1 { top: 40px; font-size: 80px; animation-duration: 40s; color: rgba(255,255,255,0.4); }
+    .cloud-layer-2 { top: 90px; font-size: 120px; animation-duration: 60s; animation-delay: -15s; color: rgba(255,255,255,0.2); }
     
-    .rain-drop {
+    .rain-drop-large {
       position: absolute;
       width: 2px;
-      height: 10px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.8));
-      animation: rainFall 1s linear infinite;
+      height: 20px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.5));
+      animation: rainFall 0.8s linear infinite;
       z-index: 4;
     }
 
     @keyframes sunPulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(245, 158, 11, 0.7); }
-      50% { transform: scale(1.1); box-shadow: 0 0 35px rgba(245, 158, 11, 0.9); }
+      0%, 100% { transform: scale(1); box-shadow: 0 0 50px rgba(245, 158, 11, 0.5); }
+      50% { transform: scale(1.05); box-shadow: 0 0 70px rgba(245, 158, 11, 0.8); }
     }
-    @keyframes floatMoon {
-      0%, 100% { transform: rotate(-45deg) translate(-6px, -6px); }
-      50% { transform: rotate(-45deg) translate(-6px, -2px); }
-    }
-    @keyframes rotateRays { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes floatCloud {
-      from { transform: translateX(-80px); }
-      to { transform: translateX(80px); }
+      from { transform: translateX(-150px); }
+      to { transform: translateX(110vw); }
     }
     @keyframes twinkle {
-      0% { opacity: 0.2; transform: scale(0.8); }
-      100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 5px white; }
+      0% { opacity: 0.1; transform: scale(0.5); }
+      100% { opacity: 0.9; transform: scale(1.2); box-shadow: 0 0 8px white; }
     }
     @keyframes rainFall {
-      0% { transform: translateY(-20px); opacity: 0; }
+      0% { transform: translateY(-30px); opacity: 0; }
       20% { opacity: 1; }
-      100% { transform: translateY(40px); opacity: 0; }
+      100% { transform: translateY(300px); opacity: 0; }
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -341,19 +296,23 @@
           </div>
         </div>
 
-        <!-- Weather Widget -->
-        <div class="glass-card p-6 animate-in delay-2">
-          <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><span>⛅</span> Local Weather</h3>
-          <div id="weather-container" class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div id="weather-icon" class="text-4xl drop-shadow-md"><i class="fa-solid fa-hourglass-half"></i></div>
-              <div>
-                <p id="weather-temp" class="text-3xl font-bold text-slate-800">--°C</p>
-                <p id="weather-desc" class="text-sm font-medium text-emerald-600 capitalize">Fetching data...</p>
-              </div>
+        <!-- Immersive Weather Widget -->
+        <div class="glass-card overflow-hidden animate-in delay-2 relative p-0 h-[280px]">
+          <div id="weather-bg-container" class="absolute inset-0 w-full h-full z-0 transition-colors duration-1000 weather-bg-day">
+            <!-- Animated Scene injected here -->
+          </div>
+          
+          <div class="relative z-10 p-6 flex flex-col h-full justify-between">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white/90 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> <span id="weather-location-name">Locating...</span></h3>
+              <span class="text-[10px] bg-black/20 text-white/90 px-2 py-1 rounded backdrop-blur-md uppercase tracking-wider font-bold">Open-Meteo</span>
+            </div>
+            
+            <div class="text-center mt-2 flex-grow flex flex-col items-center justify-center">
+              <h2 id="weather-temp" class="text-8xl font-medium text-white drop-shadow-lg mb-2 tracking-tighter" style="font-family: 'Inter', sans-serif;">--°</h2>
+              <p id="weather-desc" class="text-base font-semibold text-white/95 drop-shadow-md tracking-wide">Fetching data...</p>
             </div>
           </div>
-          <p class="text-xs text-slate-400 mt-4 text-center font-medium">Powered by Open-Meteo</p>
         </div>
 
       </div>
@@ -688,7 +647,10 @@
     async function fetchWeather(locationStr) {
       const tempEl = document.getElementById('weather-temp');
       const descEl = document.getElementById('weather-desc');
-      const iconEl = document.getElementById('weather-icon');
+      const bgContainer = document.getElementById('weather-bg-container');
+      const locNameEl = document.getElementById('weather-location-name');
+
+      if(locNameEl) locNameEl.textContent = locationStr.split(',')[0];
 
       try {
         const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationStr)}&format=json&limit=1`);
@@ -699,83 +661,93 @@
         const lat = geoData[0].lat;
         const lon = geoData[0].lon;
 
-        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
         const weatherData = await weatherRes.json();
+        
+        let aqiText = '';
+        try {
+          const aqiRes = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi`);
+          const aqiData = await aqiRes.json();
+          if(aqiData && aqiData.current) {
+             const aqi = aqiData.current.us_aqi;
+             let status = 'Good';
+             if(aqi > 50) status = 'Moderate';
+             if(aqi > 100) status = 'Unhealthy';
+             aqiText = `Air quality: ${aqi} – ${status}`;
+          }
+        } catch(e) { console.error('AQI Error:', e); }
 
         if (weatherData && weatherData.current) {
           const temp = Math.round(weatherData.current.temperature_2m);
           const code = weatherData.current.weather_code;
           const hour = new Date().getHours();
           const isNight = hour < 6 || hour >= 18;
+          
+          const minTemp = weatherData.daily ? Math.round(weatherData.daily.temperature_2m_min[0]) : '--';
+          const maxTemp = weatherData.daily ? Math.round(weatherData.daily.temperature_2m_max[0]) : '--';
 
-          tempEl.textContent = `${temp}°C`;
+          tempEl.textContent = `${temp}°`;
 
           let desc = 'Cloudy';
-          if (code === 0) desc = 'Clear sky';
+          if (code === 0) desc = 'Clear';
           else if (code >= 1 && code <= 3) desc = 'Partly cloudy';
           else if (code >= 45 && code <= 48) desc = 'Foggy';
           else if (code >= 51 && code <= 67) desc = 'Rainy';
           else if (code >= 71 && code <= 82) desc = 'Snowy';
           else if (code >= 95) desc = 'Stormy';
 
-          descEl.textContent = desc;
+          descEl.innerHTML = `${desc} &nbsp; ${minTemp}° / ${maxTemp}° &nbsp; ${aqiText}`;
           
           let isRainy = code >= 51 && code <= 67 || code >= 95;
           let isSnowy = code >= 71 && code <= 82;
           
-          let weatherClass = isNight ? 'night' : '';
-          if (isRainy || isSnowy) weatherClass += ' rainy';
+          // Determine Background Class
+          bgContainer.className = "absolute inset-0 w-full h-full z-0 transition-colors duration-1000";
+          if (isRainy || isSnowy) {
+            bgContainer.classList.add("weather-bg-rain");
+          } else if (isNight) {
+            bgContainer.classList.add("weather-bg-night");
+          } else {
+            bgContainer.classList.add("weather-bg-day");
+          }
           
           let starsHtml = isNight && !isRainy && !isSnowy ? `
             <div class="stars">
-              <div class="star" style="top: 15%; left: 20%; width: 2px; height: 2px; animation-delay: 0s;"></div>
-              <div class="star" style="top: 30%; left: 80%; width: 3px; height: 3px; animation-delay: 0.5s;"></div>
-              <div class="star" style="top: 70%; left: 15%; width: 2px; height: 2px; animation-delay: 1s;"></div>
-              <div class="star" style="top: 80%; left: 70%; width: 2px; height: 2px; animation-delay: 1.5s;"></div>
+              ${Array.from({length: 15}).map((_, i) => `<div class="star" style="top: ${Math.random()*60}%; left: ${Math.random()*100}%; width: ${Math.random()*3}px; height: ${Math.random()*3}px; animation-delay: ${Math.random()*2}s;"></div>`).join('')}
             </div>
           ` : '';
 
-          let rainHtml = isRainy ? `
-            <div class="rain-drop" style="left: 30%; animation-delay: 0s;"></div>
-            <div class="rain-drop" style="left: 50%; animation-delay: 0.4s;"></div>
-            <div class="rain-drop" style="left: 70%; animation-delay: 0.8s;"></div>
-          ` : '';
+          let rainHtml = isRainy ? Array.from({length: 20}).map((_, i) => `<div class="rain-drop-large" style="left: ${Math.random()*100}%; animation-delay: ${Math.random()}s; opacity: ${Math.random()};"></div>`).join('') : '';
 
-          let snowHtml = isSnowy ? `
-            <div class="rain-drop" style="left: 20%; animation-delay: 0s; height: 5px; width: 5px; border-radius: 50%; background: white;"></div>
-            <div class="rain-drop" style="left: 50%; animation-delay: 0.5s; height: 6px; width: 6px; border-radius: 50%; background: white;"></div>
-            <div class="rain-drop" style="left: 80%; animation-delay: 1s; height: 5px; width: 5px; border-radius: 50%; background: white;"></div>
-          ` : '';
+          let snowHtml = isSnowy ? Array.from({length: 20}).map((_, i) => `<div class="rain-drop-large" style="left: ${Math.random()*100}%; animation-delay: ${Math.random()}s; height: ${Math.random()*6 + 4}px; width: ${Math.random()*6 + 4}px; border-radius: 50%; background: white;"></div>`).join('') : '';
 
-          // Inject Animated Scene
-          iconEl.innerHTML = `
-            <div class="weather-scene ${weatherClass}">
-              ${starsHtml}
-              ${isNight ? `
-                <div class="moon-crescent"></div>
-              ` : `
-                <div class="sun"></div>
-                <div class="sun-rays">
-                  <span></span><span></span><span></span><span></span>
-                </div>
-              `}
-              ${code !== 0 ? `
-                <i class="fa-solid fa-cloud cloud cloud-1"></i>
-                <i class="fa-solid fa-cloud cloud cloud-2"></i>
-              ` : ''}
-              ${rainHtml}
-              ${snowHtml}
-            </div>
+          // Inject Animated Scene Elements
+          bgContainer.innerHTML = `
+            ${starsHtml}
+            ${isNight ? `
+              <div class="moon-full">
+                <div class="moon-crater crater-1"></div>
+                <div class="moon-crater crater-2"></div>
+                <div class="moon-crater crater-3"></div>
+              </div>
+            ` : `
+              <div class="sun-large"></div>
+            `}
+            ${code !== 0 ? `
+              <i class="fa-solid fa-cloud cloud-layer cloud-layer-1"></i>
+              <i class="fa-solid fa-cloud cloud-layer cloud-layer-2" style="left: 30%"></i>
+              <i class="fa-solid fa-cloud cloud-layer cloud-layer-1" style="animation-delay: -20s; font-size: 100px; top: 120px;"></i>
+            ` : ''}
+            ${rainHtml}
+            ${snowHtml}
           `;
-          iconEl.className = ""; // Remove previous text-4xl class if any
         } else {
           throw new Error("No weather data");
         }
       } catch (error) {
         console.error("Weather fetch error:", error);
-        tempEl.textContent = "--°C";
+        tempEl.textContent = "--°";
         descEl.textContent = "Weather unavailable";
-        iconEl.innerHTML = "☁️";
       }
     }
 
