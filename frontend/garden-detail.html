@@ -74,7 +74,7 @@
       }
 
       try {
-        const res = await fetch(`http://localhost:5000/api/gardens/${gardenId}`);
+        const res = await fetch(`/api/gardens/${gardenId}`);
         if (!res.ok) throw new Error("Garden not found");
         const garden = await res.json();
         
@@ -251,7 +251,7 @@
           const comment = document.getElementById('reviewComment').value;
 
           try {
-            const res = await fetch(`http://localhost:5000/api/gardens/${gardenId}/reviews`, {
+            const res = await fetch(`/api/gardens/${gardenId}/reviews`, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -277,7 +277,7 @@
       if (!token) { showToast('Please login to request access!', 'warn'); return; }
 
       try {
-        const res = await fetch('http://localhost:5000/api/requests', {
+        const res = await fetch('/api/requests', {
           method: 'POST',
           headers: { 
             'Authorization': `Bearer ${token}`,

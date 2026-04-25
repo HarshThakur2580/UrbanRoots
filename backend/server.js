@@ -51,7 +51,10 @@ app.use('/api/bot', require('./routes/botRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 
 const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+}
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+module.exports = app;
  
  

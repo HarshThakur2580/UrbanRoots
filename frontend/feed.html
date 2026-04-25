@@ -238,7 +238,7 @@
       try {
         const btn = document.getElementById('postBtn');
         btn.disabled = true; btn.textContent = 'Posting...';
-        const res = await fetch('http://localhost:5000/api/posts', {
+        const res = await fetch('/api/posts', {
           method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
         });
         if (res.ok) {
@@ -254,7 +254,7 @@
     async function fetchPosts() {
       const isMyPosts = currentTab === 'my';
       const token = localStorage.getItem('token');
-      const url = isMyPosts ? 'http://localhost:5000/api/posts/my' : 'http://localhost:5000/api/posts';
+      const url = isMyPosts ? '/api/posts/my' : '/api/posts';
       const headers = isMyPosts ? { 'Authorization': `Bearer ${token}` } : {};
 
       try {
@@ -373,7 +373,7 @@
       if (!token) { showToast('Login to comment', 'warn'); return; }
       const input = document.getElementById(`commentInput-${postId}`);
       try {
-        const res = await fetch(`http://localhost:5000/api/posts/${postId}/comment`, {
+        const res = await fetch(`/api/posts/${postId}/comment`, {
           method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: input.value })
         });
@@ -385,7 +385,7 @@
       const token = localStorage.getItem('token');
       if (!token) { showToast('Login to like', 'warn'); return; }
       try {
-        const res = await fetch(`http://localhost:5000/api/posts/${postId}/like`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch(`/api/posts/${postId}/like`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
         if (res.ok) fetchPosts();
       } catch (err) { showToast(err.message, 'error'); }
     }
@@ -440,7 +440,7 @@
       for (let i = 0; i < newFiles.length; i++) formData.append('media', newFiles[i]);
 
       try {
-        const res = await fetch(`http://localhost:5000/api/posts/${editingPostId}`, {
+        const res = await fetch(`/api/posts/${editingPostId}`, {
           method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }, body: formData
         });
         if (res.ok) {
@@ -454,7 +454,7 @@
     async function deletePost(postId) {
       if (!confirm('Delete this post?')) return;
       try {
-        const res = await fetch(`http://localhost:5000/api/posts/${postId}`, {
+        const res = await fetch(`/api/posts/${postId}`, {
           method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         if (res.ok) { showToast('Deleted', 'success'); fetchPosts(); }

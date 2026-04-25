@@ -287,7 +287,7 @@
 
     async function fetchPlants() {
       try {
-        const res = await fetch('http://localhost:5000/api/plants');
+        const res = await fetch('/api/plants');
         allPlants = await res.json();
         if (currentTab === 'all') renderPlants(allPlants);
       } catch (e) { console.error(e); }
@@ -296,7 +296,7 @@
     async function fetchMyListings() {
       const token = localStorage.getItem('token');
       try {
-        const res = await fetch('http://localhost:5000/api/plants/my', {
+        const res = await fetch('/api/plants/my', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         myListings = await res.json();
@@ -396,7 +396,7 @@
       for (let i = 0; i < imgInput.files.length; i++) formData.append('images', imgInput.files[i]);
 
       try {
-        const res = await fetch('http://localhost:5000/api/plants', {
+        const res = await fetch('/api/plants', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` },
           body: formData
@@ -434,7 +434,7 @@
       for (let i = 0; i < imgInput.files.length; i++) formData.append('images', imgInput.files[i]);
 
       try {
-        const res = await fetch(`http://localhost:5000/api/plants/${id}`, {
+        const res = await fetch(`/api/plants/${id}`, {
           method: 'PUT',
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: formData
@@ -450,7 +450,7 @@
     window.deleteListing = async (id) => {
       showConfirm('Delete this listing?', async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/plants/${id}`, {
+          const res = await fetch(`/api/plants/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
           });
@@ -464,7 +464,7 @@
       if (!token) { showToast('Login to contact seller', 'warn'); return; }
       showConfirm('Contact seller about this plant?', async () => {
         try {
-          const res = await fetch('http://localhost:5000/api/requests', {
+          const res = await fetch('/api/requests', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: 'Plant Purchase', targetId, targetModel: 'Plant', ownerId })

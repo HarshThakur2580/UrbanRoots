@@ -304,7 +304,7 @@
 
     async function fetchEvents() {
       try {
-        const res = await fetch('http://localhost:5000/api/events');
+        const res = await fetch('/api/events');
         allEvents = await res.json();
         if (currentFilter !== 'my') applyFilters();
       } catch (e) { console.error(e); }
@@ -313,7 +313,7 @@
     async function fetchMyEvents() {
       const token = localStorage.getItem('token');
       try {
-        const res = await fetch('http://localhost:5000/api/events/my', {
+        const res = await fetch('/api/events/my', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         myEvents = await res.json();
@@ -423,7 +423,7 @@
       const files = document.getElementById('images').files;
       for (let i = 0; i < files.length; i++) formData.append('images', files[i]);
       try {
-        const res = await fetch('http://localhost:5000/api/events', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData });
+        const res = await fetch('/api/events', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData });
         if (res.ok) { showToast('Event Hosted! 🎉', 'success'); document.getElementById('eventModal').classList.add('hidden'); e.target.reset(); fetchEvents(); }
       } catch (err) { showToast(err.message, 'error'); }
     });
@@ -454,7 +454,7 @@
       const files = document.getElementById('editImages').files;
       for (let i = 0; i < files.length; i++) formData.append('images', files[i]);
       try {
-        const res = await fetch(`http://localhost:5000/api/events/${id}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }, body: formData });
+        const res = await fetch(`/api/events/${id}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }, body: formData });
         if (res.ok) { showToast('Event updated!', 'success'); document.getElementById('editEventModal').classList.add('hidden'); fetchMyEvents(); fetchEvents(); }
       } catch (err) { showToast(err.message, 'error'); }
     });
@@ -463,7 +463,7 @@
       const id = document.getElementById('editId').value;
       if (!confirm('Delete event?')) return;
       try {
-        const res = await fetch(`http://localhost:5000/api/events/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+        const res = await fetch(`/api/events/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
         if (res.ok) { showToast('Event deleted', 'success'); document.getElementById('editEventModal').classList.add('hidden'); fetchMyEvents(); fetchEvents(); }
       } catch (err) { showToast(err.message, 'error'); }
     };
@@ -473,19 +473,19 @@
       if (!token) return window.location.href = 'login.html';
       const performJoin = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/events/${id}/join`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+          const res = await fetch(`/api/events/${id}/join`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
           if (res.ok) { showToast("Joined event! 🎉", 'success'); fetchEvents(); } else { const d = await res.json(); showToast(d.message || 'Error', 'warn'); }
         } catch (err) { showToast(err.message, 'error'); }
       };
       if (fee > 0) {
         showToast("Redirecting to payment... 🎟️", "info");
         try {
-          const res = await fetch('http://localhost:5000/api/payments/create-order', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: fee }) });
+          const res = await fetch('/api/payments/create-order', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: fee }) });
           const order = await res.json(); if (!res.ok) throw new Error(order.message);
-          const keyRes = await fetch('http://localhost:5000/api/payments/key', { headers: { 'Authorization': `Bearer ${token}` } });
+          const keyRes = await fetch('/api/payments/key', { headers: { 'Authorization': `Bearer ${token}` } });
           const keyData = await keyRes.json();
           const options = { key: keyData.key, amount: order.amount, currency: "INR", name: "UrbanRoots", order_id: order.id, handler: async function (response) { 
-            const verifyRes = await fetch('http://localhost:5000/api/payments/verify', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(response) });
+            const verifyRes = await fetch('/api/payments/verify', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(response) });
             if (verifyRes.ok) await performJoin(); else showToast('Payment failed', 'error');
           }, theme: { color: "#10b981" } };
           new Razorpay(options).open();

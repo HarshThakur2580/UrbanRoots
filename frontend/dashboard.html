@@ -715,7 +715,7 @@
       // Fetch fresh user data
       let user;
       try {
-        const meRes = await fetch(`http://localhost:5000/api/auth/me?_t=${Date.now()}`, {
+        const meRes = await fetch(`/api/auth/me?_t=${Date.now()}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Cache-Control': 'no-cache, no-store',
@@ -765,7 +765,7 @@
 
         // Fetch My Gardens
         try {
-          const res = await fetch('http://localhost:5000/api/gardens');
+          const res = await fetch('/api/gardens');
           const gardens = await res.json();
           const currentUserId = user?._id || user?.id;
           const myGardens = gardens.filter(g => {
@@ -826,7 +826,7 @@
         // Add Modal JS Logic
         window.openEditGardenModal = async (id) => {
           try {
-            const res = await fetch(`http://localhost:5000/api/gardens/${id}`);
+            const res = await fetch(`/api/gardens/${id}`);
             const garden = await res.json();
             if (!res.ok) throw new Error(garden.message);
 
@@ -859,7 +859,7 @@
           for (let i = 0; i < files.length; i++) formData.append('images', files[i]);
 
           try {
-            const res = await fetch(`http://localhost:5000/api/gardens/${id}`, {
+            const res = await fetch(`/api/gardens/${id}`, {
               method: 'PUT',
               headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
               body: formData
@@ -875,7 +875,7 @@
         window.deleteGarden = async (id) => {
           showConfirm('Delete this garden?', async () => {
             try {
-              const res = await fetch(`http://localhost:5000/api/gardens/${id}`, {
+              const res = await fetch(`/api/gardens/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
               });
@@ -889,7 +889,7 @@
 
         // Fetch Requests
         try {
-          const res = await fetch('http://localhost:5000/api/requests', {
+          const res = await fetch('/api/requests', {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           const allRequests = await res.json();
@@ -960,7 +960,7 @@
     async function updateRequest(id, status) {
       const token = localStorage.getItem('token');
       try {
-        const res = await fetch(`http://localhost:5000/api/requests/${id}/status`, {
+        const res = await fetch(`/api/requests/${id}/status`, {
           method: 'PUT',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ status })
@@ -981,7 +981,7 @@
         async () => {
           const token = localStorage.getItem('token');
           try {
-            const res = await fetch(`http://localhost:5000/api/gardens/${gardenId}`, {
+            const res = await fetch(`/api/gardens/${gardenId}`, {
               method: 'DELETE',
               headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -1016,7 +1016,7 @@
           try {
             const avatarForm = new FormData();
             avatarForm.append('profilePicture', picFile);
-            const avatarRes = await fetch('http://localhost:5000/api/auth/upload-avatar', {
+            const avatarRes = await fetch('/api/auth/upload-avatar', {
               method: 'POST',
               headers: { 'Authorization': `Bearer ${token}` },
               body: avatarForm
@@ -1044,7 +1044,7 @@
           const pwd = document.getElementById('epPassword').value;
           if (pwd) profileData.password = pwd;
 
-          const res = await fetch('http://localhost:5000/api/auth/me', {
+          const res = await fetch('/api/auth/me', {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify(profileData)

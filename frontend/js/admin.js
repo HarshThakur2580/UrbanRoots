@@ -5,7 +5,7 @@ let adminData = null;
 async function initAdminDashboard() {
   const token = localStorage.getItem('token');
   try {
-    const res = await fetch('http://localhost:5000/api/admin/dashboard', {
+    const res = await fetch('/api/admin/dashboard', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     if (!res.ok) throw new Error('Failed to fetch admin data');
@@ -233,7 +233,7 @@ async function confirmAdminDelete() {
   btn.disabled = true;
 
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/delete/${type}/${id}`, {
+    const res = await fetch(`/api/admin/delete/${type}/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
