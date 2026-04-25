@@ -440,7 +440,7 @@
   const input = document.getElementById('groot-input');
   const chat = document.getElementById('groot-chat');
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const text = input.value.trim();
     if (!text) return;
@@ -460,14 +460,42 @@
     chat.appendChild(typingDiv);
     chat.scrollTop = chat.scrollHeight;
 
-    // Append Bot Response (Simulated AI)
-    setTimeout(() => {
+    // Fetch Bot Response from API
+    try {
+      const response = await fetch('/api/bot/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: text })
+      });
+      
+      const data = await response.json();
+      
       typingDiv.remove();
       const botDiv = document.createElement('div');
       botDiv.className = 'groot-msg bot animate-in';
-      botDiv.innerHTML = `<strong>I am Groot.</strong> <br>(Based on my extensive botanical knowledge, "${text}" is a great topic. Ensure proper sunlight, consistent watering, and well-draining soil for optimal growth!) <i class="fa-solid fa-leaf text-emerald-500"></i>`;
+      
+      if (response.ok) {
+        // Format the response slightly if needed, assuming the AI returns plain text
+        // Convert basic newlines to <br> for HTML rendering
+        const formattedReply = data.reply.replace(/\n/g, '<br>');
+        botDiv.innerHTML = `<strong>I am Groot.</strong> <br>(${formattedReply}) <i class="fa-solid fa-leaf text-emerald-500"></i>`;
+      } else {
+        botDiv.innerHTML = `<strong>I am Groot...</strong> <br>(Sorry, I encountered an error: ${data.message || 'Failed to connect to nature network.'}) <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>`;
+      }
+      
       chat.appendChild(botDiv);
       chat.scrollTop = chat.scrollHeight;
-    }, 1500);
+      
+    } catch (error) {
+      typingDiv.remove();
+      const botDiv = document.createElement('div');
+      botDiv.className = 'groot-msg bot animate-in';
+      botDiv.innerHTML = `<strong>I am Groot...</strong> <br>(My connection to the roots seems broken right now. Please try again later.) <i class="fa-solid fa-link-slash text-rose-500"></i>`;
+      chat.appendChild(botDiv);
+      chat.scrollTop = chat.scrollHeight;
+      console.error('Groot API Error:', error);
+    }
   });
 })();
